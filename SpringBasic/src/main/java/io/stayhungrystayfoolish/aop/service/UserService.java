@@ -1,6 +1,7 @@
 package io.stayhungrystayfoolish.aop.service;
 
 import io.stayhungrystayfoolish.aop.domain.User;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -10,9 +11,9 @@ import java.util.List;
  * @Date: 2019-08-18 18:35
  * @Version: V1.0
  */
+@Service
 public interface UserService {
 
-//    @Insert("insert ")
     User save(User user);
 
     User findById(Long id);

@@ -56,6 +56,5 @@
         <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
     </bean>
 
-    <!--<context:component-scan base-package="io.stayhungrystayfoolish.aop.dao" />-->
     <context:component-scan base-package="io.stayhungrystayfoolish.aop" />
 </beans>

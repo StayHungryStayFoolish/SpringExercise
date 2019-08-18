@@ -2,6 +2,7 @@ package io.stayhungrystayfoolish.aop.dao;
 
 import io.stayhungrystayfoolish.aop.domain.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Mapper
+@Component
 public interface UserDao {
 
     Long save(User user);
