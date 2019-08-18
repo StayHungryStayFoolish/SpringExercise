@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:/aop/db.properties"/>
+    <!-- 配置 Hikari -->
+    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig" init-method="getDataSource">
+        <property name="jdbcUrl" value="${datasource.url}"/>
+        <property name="poolName" value="${datasource.poolName}"/>
+        <property name="username" value="${datasource.username}"/>
+        <property name="password" value="${datasource.password}"/>
+        <property name="driverClassName" value="${datasource.driverClassName}"/>
+        <property name="maximumPoolSize" value="${datasource.maximumPoolSize}"/>
+        <property name="maxLifetime" value="${datasource.max-leftTime}"/>
+        <property name="dataSourceProperties">
+            <props>
+                <prop key="dataSourceClassName">com.mysql.jdbc.jdbc2.optional.MysqlDataSource</prop>
+                <prop key="cachePrepStmts">true</prop>
+                <prop key="prepStmtCacheSize">250</prop>
+                <prop key="prepStmtCacheSqlLimit">2048</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 注册 DataSource -->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <constructor-arg ref="hikariConfig"/>
+    </bean>
+
+    <!-- 配置事务 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- 配置SqlSessionFactory -->
+    <!--resources 内 dao 文件扫描属性配置-->
+    <!-- typeAliasesPackage 配置以后，dao 文件不需要再写全路径 -->
+    <!-- mapperLocations 扫描所有 mappers -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="typeAliasesPackage" value="io.stayhungrystayfoolish.aop.domain"/>
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+    </bean>
+
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactory"/>
+    </bean>
+    <!-- 根据mapper接口生成代理对象 -->
+    <bean id="dao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="io.stayhungrystayfoolish.aop.dao.UserDao"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
+    <!--<context:component-scan base-package="io.stayhungrystayfoolish.aop.dao" />-->
+    <context:component-scan base-package="io.stayhungrystayfoolish.aop" />
+</beans>
