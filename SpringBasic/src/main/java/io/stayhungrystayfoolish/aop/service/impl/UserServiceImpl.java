@@ -21,8 +21,7 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     public User save(User user) {
-        Long id = userDao.save(user);
-        user.setId(id);
+        userDao.save(user);
         return user;
     }
 

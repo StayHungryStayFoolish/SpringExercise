@@ -1,4 +1,4 @@
-package io.stayhungrystayfoolish.aop.domain;
+package io.stayhungrystayfoolish.annotation.domain;
 
 /**
  * @Author: bonismo@hotmail.com

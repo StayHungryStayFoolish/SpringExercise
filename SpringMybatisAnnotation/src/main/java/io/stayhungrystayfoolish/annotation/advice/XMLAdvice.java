@@ -1,4 +1,4 @@
-package io.stayhungrystayfoolish.aop.advice;
+package io.stayhungrystayfoolish.annotation.advice;
 
 /**
  * @Author: bonismo@hotmail.com

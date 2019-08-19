@@ -1,7 +1,9 @@
-package io.stayhungrystayfoolish.aop.dao;
+package io.stayhungrystayfoolish.annotation.dao;
 
-import io.stayhungrystayfoolish.aop.domain.User;
+import io.stayhungrystayfoolish.annotation.domain.User;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,7 +18,9 @@ import java.util.List;
 @Component
 public interface UserDao {
 
-    Long save(User user);
+    @Insert("INSERT INTO user (name,age) VALUES (#{name}, #{age})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    void save(User user);
 
     User findById(Long id);
 

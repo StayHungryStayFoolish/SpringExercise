@@ -44,17 +44,22 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="typeAliasesPackage" value="io.stayhungrystayfoolish.aop.domain"/>
-        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
     </bean>
 
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactory"/>
     </bean>
-    <!-- 根据mapper接口生成代理对象 -->
-    <bean id="dao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-        <property name="mapperInterface" value="io.stayhungrystayfoolish.aop.dao.UserDao"/>
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+
+    <!-- 如果使用 xml方式，根据mapper接口生成代理对象 -->
+    <!--<bean id="dao" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
+        <!--<property name="mapperInterface" value="io.stayhungrystayfoolish.annotation.dao.UserDao"/>-->
+        <!--<property name="sqlSessionFactory" ref="sqlSessionFactory"/>-->
+    <!--</bean>-->
+
+    <!-- 直接使用 MyBatis Java API 注解形式 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="io.stayhungrystayfoolish.annotation.dao" />
     </bean>
 
-    <context:component-scan base-package="io.stayhungrystayfoolish.aop" />
+    <context:component-scan base-package="io.stayhungrystayfoolish.annotation" />
 </beans>
