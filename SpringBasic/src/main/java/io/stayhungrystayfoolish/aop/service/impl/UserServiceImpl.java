@@ -26,14 +26,14 @@ public class UserServiceImpl implements UserService {
     }
 
     public User findById(Long id) {
-        return null;
+        return userDao.findById(id);
     }
 
     public List<User> findAll() {
-        return null;
+        return userDao.findAll();
     }
 
     public void deleteById(Long id) {
-
+        userDao.deleteById(id);
     }
 }
