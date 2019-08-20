@@ -1,15 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tool"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool.xsd"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
->
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/aop
+      http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+    <context:property-placeholder location="classpath:/aop/db.properties"/>
+    <!-- 配置 Hikari -->
+    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig" init-method="getDataSource">
+        <property name="jdbcUrl" value="${datasource.url}"/>
+        <property name="poolName" value="${datasource.poolName}"/>
+        <property name="username" value="${datasource.username}"/>
+        <property name="password" value="${datasource.password}"/>
+        <property name="driverClassName" value="${datasource.driverClassName}"/>
+        <property name="maximumPoolSize" value="${datasource.maximumPoolSize}"/>
+        <property name="maxLifetime" value="${datasource.max-leftTime}"/>
+        <property name="dataSourceProperties">
+            <props>
+                <prop key="dataSourceClassName">com.mysql.jdbc.jdbc2.optional.MysqlDataSource</prop>
+                <prop key="cachePrepStmts">true</prop>
+                <prop key="prepStmtCacheSize">250</prop>
+                <prop key="prepStmtCacheSqlLimit">2048</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 注册 DataSource -->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <constructor-arg ref="hikariConfig"/>
+    </bean>
+
+    <!-- 配置事务 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 配置SqlSessionFactory -->
+    <!--resources 内 dao 文件扫描属性配置-->
+    <!-- typeAliasesPackage 配置以后，dao 文件不需要再写全路径 -->
+    <!-- mapperLocations 扫描所有 mappers -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="typeAliasesPackage" value="io.stayhungrystayfoolish.aop.domain"/>
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+    </bean>
+
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactory"/>
+    </bean>
+    <!-- 根据mapper接口生成代理对象 -->
+    <bean id="dao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="io.stayhungrystayfoolish.aop.dao.UserDao"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+
+    <context:component-scan base-package="io.stayhungrystayfoolish.aop"/>
+
+    <!-- ================== 上边是 applicationContext.xml 配置，以下是 AOP 配置部分 ==============  -->
 
     <!-- 配置 AOP 目标对象-->
     <bean class="io.stayhungrystayfoolish.aop.service.impl.UserServiceImpl"/>
 
     <!-- 配置 AOP 通知类 -->
-    <bean class="io.stayhungrystayfoolish.aop.advice.XMLAdvice"/>
+    <bean id="xmlAdvice" class="io.stayhungrystayfoolish.aop.advice.XMLAdvice"/>
 
     <!--
     proxy-target-class 标签默认省略，Spring AOP 默认使用 JDK 动态代理，
@@ -20,6 +79,18 @@
     <!--<aop:config >-->
     <!-- 以上三个标签都可以使用该属性，详见 @link: https://docs.spring.io/spring/docs/2.5.x/reference/aop.html -->
     <aop:config proxy-target-class="false">
-
+<!--        打开5种通知方式，测试相关功能 -->
+        <aop:aspect ref="xmlAdvice">
+<!--             before 目标方法调用前，执行此 advice -->
+<!--            <aop:before method="xmlBeforeAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))"/>-->
+<!--             around 目标方法调用前、调用后处理，执行此 advice（当抛出异常，立即退出，会转向 after advice，执行完转到 throwing advice）-->
+<!--            <aop:around method="xmlAroundInterceptor" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..)) throws "/>-->
+<!--             after 目标方法正常结束、异常都执行此 advice -->
+<!--            <aop:after method="xmlAfterAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..)) throws "/>-->
+<!--             after returning 目标方法调用正常结束，不管有无返回结果，执行此 advice-->
+<!--            <aop:after-returning method="xmlAfterReturnAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))"/>-->
+<!--             after throwing 目标方法执行异常退出，执行此 advice-->
+            <aop:after-throwing method="xmlAfterThrowingAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))" throwing="throwable"/>
+        </aop:aspect>
     </aop:config>
 </beans>

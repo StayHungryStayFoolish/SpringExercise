@@ -10,6 +10,7 @@
       http://www.springframework.org/schema/aop
       http://www.springframework.org/schema/aop/spring-aop.xsd">
 
+
     <context:property-placeholder location="classpath:/aop/db.properties"/>
     <!-- 配置 Hikari -->
     <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig" init-method="getDataSource">
@@ -37,7 +38,7 @@
 
     <!-- 配置事务 -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
     <!-- 配置SqlSessionFactory -->
@@ -59,5 +60,10 @@
         <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
     </bean>
 
-    <context:component-scan base-package="io.stayhungrystayfoolish.aop" />
+    <context:component-scan base-package="io.stayhungrystayfoolish.aop"/>
+
+    <!-- ================== 上边是 applicationContext.xml 配置，以下是 AOP 配置部分 ==============  -->
+
+<!--    该标签用来解析 @Aspect 和 @Before 等注解 -->
+    <aop:aspectj-autoproxy/>
 </beans>

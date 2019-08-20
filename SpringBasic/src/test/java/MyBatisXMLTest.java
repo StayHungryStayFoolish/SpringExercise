@@ -13,15 +13,13 @@ import java.util.List;
  * @Date: 2019-08-18 20:56
  * @Version: V1.0
  */
-public class StartTest {
-
-    private ApplicationContext context;
+public class MyBatisXMLTest {
 
     private UserService userService;
 
     @Before
     public void init() {
-        context = new ClassPathXmlApplicationContext("aop/applicationContext.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("aop/applicationContext.xml");
         userService = (UserService) context.getBean("userServiceImpl");
     }
 

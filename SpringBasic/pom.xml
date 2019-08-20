@@ -34,6 +34,13 @@
             <artifactId>spring-jdbc</artifactId>
             <version>${org.springframework.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${org.springframework.version}</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <!-- 目前最快的数据库连接池，快于 druid，但是没 druid 全面 -->
         <dependency>
