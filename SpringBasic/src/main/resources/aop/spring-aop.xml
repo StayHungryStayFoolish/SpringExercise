@@ -82,7 +82,7 @@
 <!--        打开5种通知方式，测试相关功能 -->
         <aop:aspect ref="xmlAdvice">
 <!--             before 目标方法调用前，执行此 advice -->
-<!--            <aop:before method="xmlBeforeAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))"/>-->
+            <aop:before method="xmlBeforeAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))"/>
 <!--             around 目标方法调用前、调用后处理，执行此 advice（当抛出异常，立即退出，会转向 after advice，执行完转到 throwing advice）-->
 <!--            <aop:around method="xmlAroundInterceptor" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..)) throws "/>-->
 <!--             after 目标方法正常结束、异常都执行此 advice -->
@@ -90,7 +90,7 @@
 <!--             after returning 目标方法调用正常结束，不管有无返回结果，执行此 advice-->
 <!--            <aop:after-returning method="xmlAfterReturnAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))"/>-->
 <!--             after throwing 目标方法执行异常退出，执行此 advice-->
-            <aop:after-throwing method="xmlAfterThrowingAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))" throwing="throwable"/>
+<!--            <aop:after-throwing method="xmlAfterThrowingAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))" throwing="throwable"/>-->
         </aop:aspect>
     </aop:config>
 </beans>

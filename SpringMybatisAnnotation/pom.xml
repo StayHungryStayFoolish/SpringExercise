@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-io.statyhungrystayfoolish.aop</artifactId>
+            <artifactId>spring-aop</artifactId>
             <version>${org.springframework.version}</version>
         </dependency>
         <dependency>
@@ -34,6 +34,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${org.springframework.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- 目前最快的数据库连接池，快于 druid，但是没 druid 全面 -->
@@ -62,6 +68,15 @@
             <artifactId>mybatis</artifactId>
             <version>3.5.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.6.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.6.12</version>
+        </dependency>
     </dependencies>
 </project>

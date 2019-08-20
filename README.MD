@@ -48,6 +48,15 @@
     - xml 配置
     
         > 参考 SpringBasic 模块
-        >> SimpleAspect 和 spring-annotation.xml，测试通知在 UserServiceImpl 需要打开或关闭人为异常。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+        >> SimpleAspect 和 spring-annotation.xml，测试通知在 UserServiceImpl 需要打开或关闭人为异常。
+        >>> 注意 SimpleAspect 中 @Pointcut 注解及commonPointcut方法用法。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 
 - 纯注解
+
+    - 使用注解开启 AOP 
+    
+        > @Configuration
+        > @EnableAspectJAutoProxy
+        > @ComponentScan(basePackages=""")
+
+    - 项目模块未实现。

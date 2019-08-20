@@ -1,4 +1,4 @@
-package io.stayhungrystayfoolish.aop.asecpt;
+package io.stayhungrystayfoolish.aop.aspect;
 
 import io.stayhungrystayfoolish.aop.domain.User;
 import org.aspectj.lang.JoinPoint;
@@ -50,7 +50,9 @@ public class SimpleAspect {
         Object result = null;
         try {
             System.out.println("目标方法名为: " + proceedingJoinPoint.getSignature().getName());
-            // result = proceedingJoinPoint.proceed();
+            // 正常执行核心方法
+//             result = proceedingJoinPoint.proceed();
+            // 人为传错参数，进入异常
             result = proceedingJoinPoint.proceed(new Object[]{"Lily ", 19});
         } catch (Throwable throwable) {
             // 重新传入正确参数
@@ -82,9 +84,17 @@ public class SimpleAspect {
     /**
      * after throwing 目标方法执行异常退出，执行此 advice
      */
-    @AfterThrowing(pointcut = "execution(* io.stayhungrystayfoolish.aop.service..*.*(..))",throwing = "throwable")
+    @AfterThrowing(pointcut = "SimpleAspect.commonPointcut()", throwing = "throwable")
     private void xmlAfterThrowingAdvice(JoinPoint joinPoint, Throwable throwable) {
         logger.info("Throwable Message ..." + throwable.getMessage());
         logger.info("After Throwing Advice Do Something ...");
+    }
+
+    /**
+     * 如果多个切入点一样，则使用该方式，或定义一个常量。
+     */
+    @Pointcut("execution(* io.stayhungrystayfoolish.aop.service..*.*(..))")
+    private void commonPointcut() {
+
     }
 }

@@ -14,14 +14,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @Version: 1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:aop/spring-aop.xml")
-public class XMLAopTest {
+@ContextConfiguration(locations = "classpath:aop/spring-annotation.xml")
+public class MixAnnnotationXMLAOPTest {
 
     private UserService userService;
 
     @Before
     public void init() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("aop/spring-aop.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("aop/spring-annotation.xml");
         userService = (UserService) context.getBean("userServiceImpl");
     }
 
