@@ -59,4 +59,4 @@
         > @EnableAspectJAutoProxy
         > @ComponentScan(basePackages=""")
 
-    - 项目模块未实现。
+    - xml 项目模块，所以纯注解未实现。
