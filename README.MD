@@ -1,6 +1,6 @@
 # Spring IOC 基础流通分析及手写(AOP 简单应用)
 
-## AOP
+## AOP 三种实现方式
 
 - 纯 XML 方式配置 AOP
     
@@ -41,8 +41,13 @@
                                                                                                                                                                                                                                                                                                                                                                                                                                                 
             > @AfterThrowing(pointcut="..",throwing="方法内的 throwable 参数")
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-                > 其中 @AfterReturning 和 @AfterThrowing 中，既可以用 pointcut 也可以使用 value
-                > 具体区别为：两者都定义，pointcut 优先于 value，
-                > 如果只定义 value 则可以省略（@Before、@Around、@After 可以省略 value）。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                其中 @AfterReturning 和 @AfterThrowing 中，既可以用 pointcut 也可以使用 value
+                具体区别为：两者都定义，pointcut 优先于 value，
+                如果只定义 value 则可以省略（@Before、@Around、@After 可以省略 value）。
+                
+    - xml 配置
+    
+        > 参考 SpringBasic 模块
+        >> SimpleAspect 和 spring-annotation.xml，测试通知在 UserServiceImpl 需要打开或关闭人为异常。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 
 - 纯注解
