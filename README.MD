@@ -56,7 +56,9 @@
     - 使用注解开启 AOP 
     
         > @Configuration
+                           
         > @EnableAspectJAutoProxy
+                                                                                
         > @ComponentScan(basePackages=""")
 
     - xml 项目模块，所以纯注解未实现。
