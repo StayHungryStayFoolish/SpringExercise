@@ -56,9 +56,9 @@
     - 使用注解开启 AOP 
     
         > @Configuration
-                           
+        > 
         > @EnableAspectJAutoProxy
-                                                                                
+        > 
         > @ComponentScan(basePackages=""")
 
     - xml 项目模块，所以纯注解未实现。
@@ -79,25 +79,25 @@
             <aop:advisor advice-ref="xmlBeforeAdvice" pointcut-ref="userPointcut" />
         </aop:config>
         
-        
-> 如果使用 aspect 标签，在 XMLAdvice 中直接定义一般方法即可。
-        
-> 如果使用 advisor 标签，在 XMLAdvice 中则需要实现类似 MethodBeforeAdvice、AfterReturningAdvice 等接口，在实现方法中分别定义通知方式。 
-
-> 推荐使用 aop:aspect 标签       
+-         
+    > 如果使用 aspect 标签，在 XMLAdvice 中直接定义一般方法即可。
+    >
+    > 如果使用 advisor 标签，在 XMLAdvice 中则需要实现类似 MethodBeforeAdvice、AfterReturningAdvice 等接口，在实现方法中分别定义通知方式。 
+    >
+    > 推荐使用 aop:aspect 标签       
 
 - Pointcut 语法
 
-execution(* io.stayhungrystayfoolish.aop.service..*.*(..))
+    - execution(* io.stayhungrystayfoolish.aop.service..*.*(..))
 
-> execution() 表达式主体
->
-> 第一个 * 符号，返回值任意类型
->
-> io.stayhungrystayfoolish.aop.service 包名
->
-> 第一个 .. 表示当前包及其子包
->
-> 第二个 * 符号表示所有类
->
-> .*(..)  第三个 * 符号表示任意方法名 (..) 表示任意参数类型、参数个数
+    > execution() 表达式主体
+    >
+    > 第一个 * 符号，返回值任意类型
+    >
+    > io.stayhungrystayfoolish.aop.service 包名
+    >
+    > 第一个 .. 表示当前包及其子包
+    >
+    > 第二个 * 符号表示所有类
+    >
+    > .*(..)  第三个 * 符号表示任意方法名 (..) 表示任意参数类型、参数个数
