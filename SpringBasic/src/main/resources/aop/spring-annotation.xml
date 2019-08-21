@@ -51,8 +51,9 @@
     <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="false"/>
 
     <!-- 测试事务自调用，Method_A 调用 Method_B 方法，如需事务生效，需要打开此配置 -->
+    <!-- 前提：Method_A 没有事务注解，且 Method_B 有事务注解，需要将 Method_B 注解改为 @Transactional(propagation = Propagation.REQUIRES_NEW) -->
     <!-- 并且将原调用 methodB() 更改为 ((CurrentClass)AopContext.currentProxy()).methodB() 才可以生效   -->
-    <!--   <aop:aspectj-autoproxy expose-proxy="true"/>-->
+    <!--    <aop:aspectj-autoproxy expose-proxy="true"/>-->
 
 
     <!-- 配置SqlSessionFactory -->

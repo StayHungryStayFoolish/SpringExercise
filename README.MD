@@ -146,41 +146,44 @@
 
     默认为 false，使用 JDK 动态代理。同理 @EnableAspectJAutoProxy 也拥有该属性。   
 
-- 事务传播机制
+### 事务传播机制
 
-     ```java
-        public enum Propagation {
-            REQUIRED(0),
-            SUPPORTS(1),
-            MANDATORY(2),
-            REQUIRES_NEW(3),
-            NOT_SUPPORTED(4),
-            NEVER(5),
-            NESTED(6);
-        
-            private final int value;
-        
-            private Propagation(int value) {
-                this.value = value;
-            }
-        
-            public int value() {
-                return this.value;
-            }
-        }
-     ```
+```java
+   public enum Propagation {
+       REQUIRED(0),
+       SUPPORTS(1),
+       MANDATORY(2),
+       REQUIRES_NEW(3),
+       NOT_SUPPORTED(4),
+       NEVER(5),
+       NESTED(6);
+   
+       private final int value;
+   
+       private Propagation(int value) {
+           this.value = value;
+       }
+   
+       public int value() {
+           return this.value;
+       }
+   }
+```
 
-1. REQUIRED （事务传播默认行为）
+1. REQUIRED （事务传播默认机制）
     
     如果有事务，则加入事务，没有新建。
+   （ClassA methodA 方法调用 ClassB methodB 方法，如果 methodA 前不存在任何事务，开启一个新事务，methodA 调用 methodB 时，事务已经存在，methodB 会使用已存在的事务）
     
 2. SUPPORTS
 
     其他 Bean 调用该事务所在方法，其他 Bean 中声明事务则用启用事务，若其他 Bean 没有，则不启用事务。
+   **（一般不推荐使用）**
     
 3. MANDATORY
 
     必须在已有事务中执行，否则抛出异常。
+   （使用该传播机制的事务，不能单独对外提供，因为只能存在于一个已经开启事务的方法中。）
     
 4. REQUIRES_NEW（外部事务和内部事务互相独立）
 
@@ -206,15 +209,23 @@
     
     NESTED 之间会受到影响，而产生部分回滚，而 REQUIRED_NEW 则是独立的。
 
-- 常见事务不起作用原因
+- **常见事务失效原因**
 
-1. 抛出异常不属于 RunTimeException 及其子类
+1. 抛出异常不属于 RunTimeException （unchecked 异常）及其子类
 
 2. 异常在该方法被 try...catch，如果需要 try...catch，则在 catch 内使用 throw 也可以使事务重新生效。
 
 3. 同一类中 Method_A 调用 Method_B 不会使事务生效。
    前提：类上没有 @Transactional 注解，且 Method_A 对外方法没有 @Transactional 注解，只在 Method_B 方法上加该注解。
    则 Method_A 对外方法事务不生效，因为 @Transactional 注解只能用在对外方法上。
+   
+       测试事务自调用，Method_A 调用 Method_B 方法，如需事务生效，需要打开此配置
+       
+       前提：Method_A 没有事务注解，且 Method_B 有事务注解，
+       需要将 Method_B 注解改为 @Transactional(propagation = Propagation.REQUIRES_NEW)
+       并且将原调用 methodB() 更改为 ((CurrentClass)AopContext.currentProxy()).methodB() 才可以生效  
+       <aop:aspectj-autoproxy expose-proxy="true"/>
+       
    **若类上加 @Transactional，则 Method_A 调用 Method_B 事务生效。**
    
    **详细可参考 https://zhuanlan.zhihu.com/p/35483036** 
@@ -223,3 +234,111 @@
 
 5. 配置错误（参考 spring-aop.xml）
 
+### 事务隔离级别
+
+```java
+    public enum Isolation {
+        DEFAULT(-1),
+        READ_UNCOMMITTED(1),
+        READ_COMMITTED(2),
+        REPEATABLE_READ(4),
+        SERIALIZABLE(8);
+    
+        private final int value;
+    
+        private Isolation(int value) {
+            this.value = value;
+        }
+    
+        public int value() {
+            return this.value;
+        }
+    }
+```
+
+1. DEFAULT （默认隔离级别）
+    
+    采用数据源的默认隔离级别。
+    
+    **Mysql 的 InnoDB 引擎，那么级别就是 REPEATABLE_READ**
+    **Oracle，隔离级别就是 READ_COMMITTED**
+    
+2. READ_UNCOMMITTED 
+
+    读取未提交数据（会出现脏读, 不可重复读） 
+    
+   （以操作同一行数据为前提，读事务允许其他读事务和写事务，未提交的写事务**禁止**其他写事务（但允许其他读事务）。
+    此隔离级别可以防止更新丢失，但不能防止脏读、不可重复读、幻读。此隔离级别可以通过**排他写锁**实现。）
+    **不推荐使用**
+    
+3. READ_COMMITTED
+
+    读取已提交数据（会出现不可重复读和幻读）
+    
+    以操作同一行数据为前提，读事务允许其他读事务和写事务，未提交的写事务**禁止**其他读事务和写事务。
+    此隔离级别可以**防止更新丢失、脏读，但不能防止不可重复读、幻读**。此隔离级别可以通过**瞬间共享读锁**和**排他写锁**实现。
+    
+4. REPEATABLE_READ
+
+   可重复读（会出现幻读）
+   
+   以操作同一行数据为前提，读事务禁止其他写事务（但允许其他读事务），未提交的写事务禁止其他读事务和写事务。
+   此隔离级别可以**防止更新丢失、脏读、不可重复读，但不能防止幻读**。此隔离级别可以通过**共享读锁**和**排他写锁**实现。     
+          
+5. SERIALIZABLE
+
+    序列号级别
+    
+    提供严格的事务隔离。它要求事务序列化执行，事务只能一个接着一个地执行，不能并发执行。
+    此隔离级别可以防止**更新丢失、脏读、不可重复读、幻读**。
+    如果仅仅通过**行级锁**是无法实现事务序列化的，必须通过其他机制保证新插入的数据不会被刚执行查询操作的事务访问到。
+
+> 隔离级别越高，越能保证数据的完整性和一致性，但是对并发性能的影响也越大。
+> 对于多数应用程序，可以优先考虑把数据库系统的隔离级别设为 **READ_COMMITTED**。它能够避免更新丢失、脏读，而且具有较好的并发性能。
+> 尽管它会导致不可重复读、幻读这些并发问题，在可能出现这类问题的个别场合，可以由应用程序采用悲观锁或乐观锁来控制。
+
+### 事务关键词
+
+- **原子性（Atomicity）**
+
+    事务是数据库的逻辑工作单位，它对数据库的修改要么全部执行，要么全部不执行。
+    
+- **一致性（Consistency）** 
+    
+    事务前后，数据库的状态都满足所有的完整性约束。
+
+- **隔离性（Isolation）**
+
+    并发执行的事务是隔离的，一个不影响一个。
+    如果有两个事务，运行在相同的时间内，执行相同的功能，事务的隔离性将确保每一事务在系统中认为只有该事务在使用系统。
+    这种属性有时称为串行化，为了防止事务操作间的混淆，必须串行化或序列化请求，使得在同一时间仅有一个请求用于同一数据。
+    通过设置数据库的**隔离级别**，可以达到不同的隔离效果。
+    
+- **持久性（Durability）**
+
+    在事务完成以后，该事务所对数据库所作的更改便持久的保存在数据库之中，并不会被回滚。
+    
+- **更新丢失**
+
+    两个事务都同时更新一行数据，但是第二个事务却中途失败退出，导致对数据的两个修改都失效了。
+    这是因为系统没有执行任何的锁操作，因此并发事务并没有被隔离开来。    
+        
+- **脏读**
+
+    脏读又称无效数据读出。一个事务读取另外一个事务还**未提交**的数据叫**脏读**。
+    例如：事务 T1 修改了一行数据，但是还没有提交，这时候事务 T2 读取了被事务 T1 修改后的数据，
+    之后事务 T1 因为某种原因 Rollback 了，那么事务 T2 读取的数据就是脏的。  
+    
+- **不可重复读**
+
+    不可重复读是指在同一个事务内，两个相同的查询返回了**不同的结果**。
+    
+    例如：事务 T1 读取某一数据，事务 T2 读取并修改了该数据，T1 为了对读取值进行检验而再次读取该数据，便得到了不同的结果。
+    
+- **幻读**
+
+    事务在操作过程中进行两次查询，第二次查询的结果包含了第一次查询中未出现的数据或者缺少了第一次查询中出现的数据
+    
+    例如：系统管理员A将数据库中所有学生的成绩从具体分数改为ABCDE等级，但是系统管理员B就在这个时候插入了一条具体分数的记录，
+    当系统管理员A改结束后发现还有一条记录没有改过来，就好像发生了幻觉一样。这就叫幻读。
+                 
