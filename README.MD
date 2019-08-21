@@ -260,7 +260,7 @@
     
     采用数据源的默认隔离级别。
     
-    **Mysql 的 InnoDB 引擎，那么级别就是 REPEATABLE_READ**
+    **MySQL 的 InnoDB 引擎，那么级别就是 REPEATABLE_READ**
     **Oracle，隔离级别就是 READ_COMMITTED**
     
 2. READ_UNCOMMITTED 
@@ -342,3 +342,22 @@
     例如：系统管理员A将数据库中所有学生的成绩从具体分数改为ABCDE等级，但是系统管理员B就在这个时候插入了一条具体分数的记录，
     当系统管理员A改结束后发现还有一条记录没有改过来，就好像发生了幻觉一样。这就叫幻读。
                  
+**注意：**  使用 for update 实现悲观锁的时候，需要注意锁的级别，MySQL InnoDB 默认行级锁。行级锁都是基于索引的，如果一条sql语句用不到索引，是不会使用行级锁的，会使用表级，把整张表锁住。
+
+**注意：**  使用乐观锁时多数实现方法是使用版本号，或者时间戳。但是如果事务的隔离级别允许重复读（比如：REPEATABLE_READ；MySQL InnoDB 默认也是这个级别），那么使用乐观锁是查询不出版本或者时间戳的变化的，但是 Oracle 的话默认就可以。
+
+### 事务超时问题
+
+- @Transactional 注释不适用于 JDBC **读取超时异常**。
+
+- Spring 事务和数据库事务超时时间相互影响，官方 default 为-1，具体时间没讲。
+
+- 超时通过 deadLine 和 JDBC 的 Statement 和 SetQueryTime 两种策略来判断超时
+  Spring事务超时 = 事务开始时到最后一个 Statement 创建时时间 + 最后一个 Statement 的执行时超时时间（即其 QueryTimeout）。
+  源码 **DataSourceUtils.applyTimeout()**
+  
+- **参考文章**：
+    https://www.cubrid.org/blog/understanding-jdbc-internals-and-timeout-configuration
+    http://www.heartthinkdo.com/?p=910  
+    https://benjaminwhx.com/2018/02/01/JDBC%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98%E5%85%A8%E9%9D%A2%E5%88%86%E6%9E%90/
+ 
