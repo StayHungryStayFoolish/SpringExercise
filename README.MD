@@ -353,7 +353,9 @@
 - Spring 事务和数据库事务超时时间相互影响，官方 default 为-1，不限制超时时间。
 
 - 超时通过 deadLine 和 JDBC 的 Statement 和 SetQueryTime 两种策略来判断超时
+  
   Spring事务超时 = 事务开始时到最后一个 Statement 创建时时间 + 最后一个 Statement 的执行时超时时间（即其 QueryTimeout）。
+  
   源码 **DataSourceUtils.applyTimeout()**
   
 - **参考文章**：
