@@ -364,3 +364,14 @@
     http://www.heartthinkdo.com/?p=910  
     https://benjaminwhx.com/2018/02/01/JDBC%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98%E5%85%A8%E9%9D%A2%E5%88%86%E6%9E%90/
  
+ ----
+ ## Spring IOC 核心基础流程
+ 
+ - 核心继承体系
+ 
+ 1. BeanFactory（Bean 工厂）
+ 
+ 2. BeanDefinition（Bean 装备信息）
+ 
+ 3. ApplicationContext（Bean 工厂入口）
+ 
