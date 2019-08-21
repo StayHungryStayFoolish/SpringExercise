@@ -3,12 +3,15 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
       http://www.springframework.org/schema/beans/spring-beans.xsd
       http://www.springframework.org/schema/context
       http://www.springframework.org/schema/context/spring-context.xsd
       http://www.springframework.org/schema/aop
-      http://www.springframework.org/schema/aop/spring-aop.xsd">
+      http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
 
 
     <context:property-placeholder location="classpath:/aop/db.properties"/>
@@ -38,8 +41,19 @@
 
     <!-- 配置事务 -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
+        <property name="dataSource" ref="dataSource" />
     </bean>
+
+    <!-- 配置事务注解驱动 -->
+    <!-- proxy-target-class ，false 为默认值，采用 JDK 代理，true 采用 CGLIB 代理。   -->
+    <!-- 如果采用 CGLIB 代理，@Transactional 若使用在接口上则事务失效。因为 CGLIB 基于类代理被创建，JDK 基于接口代理被创建。 -->
+    <!-- 推荐使用 JDK 接口代理  -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="false"/>
+
+    <!-- 测试事务自调用，Method_A 调用 Method_B 方法，如需事务生效，需要打开此配置 -->
+    <!-- 并且将原调用 methodB() 更改为 ((CurrentClass)AopContext.currentProxy()).methodB() 才可以生效   -->
+    <!-- <aop:aspectj-autoproxy expose-proxy="true"/>-->
+
 
     <!-- 配置SqlSessionFactory -->
     <!--resources 内 dao 文件扫描属性配置-->
@@ -82,7 +96,7 @@
 <!--        打开5种通知方式，测试相关功能 -->
         <aop:aspect ref="xmlAdvice">
 <!--             before 目标方法调用前，执行此 advice -->
-            <aop:before method="xmlBeforeAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))"/>
+<!--            <aop:before method="xmlBeforeAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))"/>-->
 <!--             around 目标方法调用前、调用后处理，执行此 advice（当抛出异常，立即退出，会转向 after advice，执行完转到 throwing advice）-->
 <!--            <aop:around method="xmlAroundInterceptor" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..)) throws "/>-->
 <!--             after 目标方法正常结束、异常都执行此 advice -->

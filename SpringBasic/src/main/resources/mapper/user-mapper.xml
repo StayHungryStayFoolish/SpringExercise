@@ -7,6 +7,10 @@
     <insert id="save" parameterType="User" useGeneratedKeys="true" keyProperty="id">
       INSERT INTO user (name,age) VALUES (#{name}, #{age});
     </insert>
+
+    <update id="update" parameterType="User">
+        UPDATE user SET name = #{name}, age=#{age} WHERE id = #{id};
+    </update>
     <select id="findById" parameterType="java.lang.Long"
             resultType="User">
         SELECT * FROM user WHERE id = #{id}

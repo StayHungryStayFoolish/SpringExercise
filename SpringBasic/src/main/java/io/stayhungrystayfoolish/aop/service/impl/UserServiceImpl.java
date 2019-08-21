@@ -5,6 +5,7 @@ import io.stayhungrystayfoolish.aop.domain.User;
 import io.stayhungrystayfoolish.aop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -26,7 +28,16 @@ public class UserServiceImpl implements UserService {
         // after 无论是否异常均执行 AOP
         // after-returning 异常不执行 AOP
         // after-throwing 只有异常执行 AOP
-//        int i =1 / 0;
+//        int i = 1 / 0;
+//        deleteById(user.getId());
+        user.setName("Lily");
+        user.setAge(19);
+        update(user);
+        return user;
+    }
+
+    public User update(User user) {
+        userDao.update(user);
         return user;
     }
 
