@@ -15,11 +15,11 @@
 
 2. 采用设计原则的接口隔离原则，设计二级接口，增加部分功能。（该模块使用 Abstract Class 代理。）
 
-3. 使用默认实现类 DefaultListableFactory 实现一、二级接口功能。
+3. 使用默认实现类 **DefaultListableBeanFactory** 实现一、二级接口功能。
 
 `以上三个步骤实现了 getBean() 功能`
 
-4. DefaultListableFactory 内需要使用数据结构存储 bean 的相关信息及实例。所以根据 xml 标签可以看出来，
+4. **DefaultListableBeanFactory** 内需要使用数据结构存储 bean 的相关信息及实例。所以根据 xml 标签可以看出来，
    最好的数据结构为 Map。
    
    此处以 **SpringBasic** 模块配置文件为例。
@@ -34,14 +34,6 @@
         <property name="driverClassName" value="${datasource.driverClassName}"/>
         <property name="maximumPoolSize" value="${datasource.maximumPoolSize}"/>
         <property name="maxLifetime" value="${datasource.max-leftTime}"/>
-        <property name="dataSourceProperties">
-            <props>
-                <prop key="dataSourceClassName">com.mysql.jdbc.jdbc2.optional.MysqlDataSource</prop>
-                <prop key="cachePrepStmts">true</prop>
-                <prop key="prepStmtCacheSize">250</prop>
-                <prop key="prepStmtCacheSqlLimit">2048</prop>
-            </props>
-        </property>
     </bean>
 
     <!-- 注册 DataSource -->
@@ -54,7 +46,19 @@
         <property name="dataSource" ref="dataSource" />
     </bean>
 ``` 
- 
+---
+   根据以上 xml 配置信息，可以简单推导出 **DefaultListableB** 中应该有两个 Map 结构。
+   
+   a. 存储解析的 xml 信息 **Map<String, BeanDefinition>** 其中 **BeanDefinition** 封装了 xml 中 *'<bean'>* 标签信息
+   
+   b. 存储 bean 的实例 **Map<String, Object> singletonBeanMap**
+   
+5. **BeanDefinition** 应该存储标签中的 id、class、init-method 以及 **PropertyValue** 封装的 *'<property'>* 标签信息
+
+6. **PropertyValue** 存储的 *value* 必须是 Object 类型，因为 *'<property'>* 的 *name* 是固定的，但是 *value* 和 *ref* 都是 String 类型。
+   所以 *value* 应该有 **TypeStringValue** 封装类来存储 value 的**属性值和属性数据类型**（根据类型、值进行**依赖注入**），*ref* 使用 **RuntimeBeanReference** 来存储字符串（*ref* 在创建 bean instance 时，通过反射获取 ref 的 ClassName 并进行实例创建）。
+   
+7. 使用加载 xml 方式，使用 **Resource** 接口获取 IO 流进行解析。      
 
 ## AOP 三种实现方式
 

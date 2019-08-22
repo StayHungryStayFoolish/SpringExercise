@@ -114,7 +114,7 @@ public class XmlBeanDefinitionDocumentParser {
         } else if (null != ref && !"".equals(ref)) {
             RuntimeBeanReference reference = new RuntimeBeanReference(ref);
             // ref 目前作为 String 存储，再 DefaultListableBeanFactory.getBean() 时会通过反射获取该类的实例
-            pv = new PropertyValue(name, ref);
+            pv = new PropertyValue(name, reference);
             beanDefinition.addPropertyValues(pv);
         }
     }
