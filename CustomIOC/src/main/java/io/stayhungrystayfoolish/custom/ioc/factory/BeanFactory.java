@@ -9,6 +9,8 @@ public interface BeanFactory {
 
     /**
      * 根据 bean name 获取实例
+     * @param beanName beanName
+     * @return 对象实例
      */
     Object getBean(String beanName);
 }
