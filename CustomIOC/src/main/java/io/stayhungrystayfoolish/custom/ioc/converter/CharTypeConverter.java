@@ -9,11 +9,14 @@ public class CharTypeConverter implements TypeConverter {
 
     @Override
     public Boolean isType(Class<?> clazz) {
-        return null;
+        return clazz == Character.class || clazz == char.class;
     }
 
     @Override
     public Object convert(String source) {
-        return null;
+        if (source.length() == 1) {
+            return source.charAt(0);
+        }
+        return source.toCharArray();
     }
 }

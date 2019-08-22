@@ -2,7 +2,7 @@ package io.stayhungrystayfoolish.custom.ioc.converter;
 
 /**
  * @Author: Created by bonismo@hotmail.com on 2019-08-22 15:38
- * @Description:
+ * @Description: 转换 xml 中 property 的 value 值。
  * @Version: 1.0
  */
 public interface TypeConverter {
@@ -10,7 +10,7 @@ public interface TypeConverter {
     /**
      * 判断类型
      *
-     * @param clazz 8种基本类型
+     * @param clazz 8 种基本类型 + String
      * @return true / false
      */
     Boolean isType(Class<?> clazz);

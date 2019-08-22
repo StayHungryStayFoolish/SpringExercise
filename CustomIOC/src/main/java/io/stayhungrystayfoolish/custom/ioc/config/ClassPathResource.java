@@ -19,6 +19,7 @@ public class ClassPathResource implements Resource {
         if (null == location || "".equals(location)) {
             return false;
         }
+        // 将 location 注册到了 ClassPathResource 中
         if (location.startsWith(CLASSPATH)) {
             this.location = location;
             return true;
@@ -33,5 +34,17 @@ public class ClassPathResource implements Resource {
         }
         location = location.replace(CLASSPATH, "");
         return this.getClass().getResourceAsStream(location);
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public static String getCLASSPATH() {
+        return CLASSPATH;
     }
 }
