@@ -1,6 +1,7 @@
 package io.stayhungrystayfoolish.custom.ioc.config;
 
 import io.stayhungrystayfoolish.custom.ioc.factory.DefaultListableBeanFactory;
+import io.stayhungrystayfoolish.custom.ioc.util.ReflectUtil;
 import org.dom4j.Element;
 
 import java.util.List;
@@ -63,8 +64,9 @@ public class XmlBeanDefinitionDocumentParser {
             // beanElement.elements() 获取当前标签的子元素
             List<Element> propertyValues = beanElement.elements();
             for (Element propertyValue : propertyValues) {
-                parsePropertyElement(propertyValue);
+                parsePropertyElement(beanDefinition, propertyValue);
             }
+            registerBeanDefinition(beanName, beanDefinition);
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -72,10 +74,14 @@ public class XmlBeanDefinitionDocumentParser {
 
     }
 
+    private void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
+        this.beanFactory.regi
+    }
+
     private void parseDefaultElement(Element element) {
     }
 
-    private void parsePropertyElement(Element propertyValue) {
+    private void parsePropertyElement(BeanDefinition beanDefinition, Element propertyValue) {
         if (null == propertyValue) {
             return;
         }
@@ -91,8 +97,19 @@ public class XmlBeanDefinitionDocumentParser {
         PropertyValue pv = null;
 
         if (null != value && !"".equals(value)) {
+            // 创建属性类型、属性值得封装类 TypeStringValue
             TypeStringValue typeStringValue = new TypeStringValue(value);
-
+            // 根据类名、属性名获取属性类型
+            Class<?> targetType = ReflectUtil.getFileTypeByFileName(beanDefinition.getBeanClassName(), name);
+            typeStringValue.setTargetType(targetType);
+            pv = new PropertyValue(name, typeStringValue);
+            // 根据 Bean 对象的属性名和属性值封装到 BeanDefinition
+            beanDefinition.addPropertyValues(pv);
+        } else if (null != ref && !"".equals(ref)) {
+            RuntimeBeanReference reference = new RuntimeBeanReference(ref);
+            // ref 目前作为 String 存储，再 DefaultListableBeanFactory.getBean() 时会通过反射获取该类的实例
+            pv = new PropertyValue(name, ref);
+            beanDefinition.addPropertyValues(pv);
         }
     }
 }

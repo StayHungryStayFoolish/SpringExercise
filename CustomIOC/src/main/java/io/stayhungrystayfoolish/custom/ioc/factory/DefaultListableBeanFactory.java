@@ -5,6 +5,7 @@ import io.stayhungrystayfoolish.custom.ioc.config.ClassPathResource;
 import io.stayhungrystayfoolish.custom.ioc.config.Resource;
 import io.stayhungrystayfoolish.custom.ioc.config.XmlBeanDefinitionParser;
 import io.stayhungrystayfoolish.custom.ioc.converter.*;
+import io.stayhungrystayfoolish.custom.ioc.util.ReflectUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,4 +100,16 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
         BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
         return super.getBean(beanName);
     }
+
+    /**
+     * 根据类名（全路径）、构造参数创建类实例
+     * @param beanName 类名（全路径）
+     * @param args 构造参数
+     * @return 类实例
+     */
+    private Object createBeanInstance(String beanName, Object... args) {
+        return ReflectUtil.generateClassInstance(beanName, args);
+    }
+
+
 }

@@ -19,7 +19,7 @@ public class ReflectUtil {
      * @param args          入参参数
      * @return 类实例
      */
-    public static Object generateClass(String beanClassName, Object... args) {
+    public static Object generateClassInstance(String beanClassName, Object... args) {
         try {
             // 根据类型获取类
             Class<?> clazz = Class.forName(beanClassName);
