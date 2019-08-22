@@ -71,6 +71,8 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
         setInstanceProperty(instance, beanDefinition);
         // 初始化
         initInstance(instance, beanDefinition);
+        // 将生成的最终实例存储到 SingletonMap 中
+        registerSingletonBean(beanName, instance);
         return instance;
     }
 
@@ -145,13 +147,23 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
     }
 
     /**
-     * 将 beanName 和其对应的 BeanDefinition 存入 Map 8盒中
+     * 将 beanName 和其对应的 BeanDefinition 存入 BeanDefinitionMap 中
      *
      * @param beanName       beanName (id、name、className 三者其中一个)
      * @param beanDefinition xml 文件中 <bean> 标签信息封装类
      */
     public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
         this.beanDefinitionMap.put(beanName, beanDefinition);
+    }
+
+    /**
+     * 将 beanName 和其对应的 instance 存入 SingletonMap 中
+     *
+     * @param beanName beanName (id、name、className 三者其中一个)
+     * @param instance bean instance
+     */
+    public void registerSingletonBean(String beanName, Object instance) {
+        this.singletonBeanMap.put(beanName, instance);
     }
 
     /**

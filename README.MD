@@ -1,9 +1,60 @@
-# Spring IOC 基础流程分析及手写(AOP 简单应用)
+# Spring IOC 基础流程分析及手写(附带 AOP、MyBatis 简单应用)
 
 ## 项目模块说明
 
-- SpringBasic 采用 XML 方式配置 MyBatis、AOP  
-- SpringMybatisAnnotation 采用注解方式配置 MyBatis  
+- **CustomIOC** 实现 Spring BeanFactory 的创建解析基本功能。
+- **spring-framework-5.0.7.RELEASE** Spring 官方 5.0.7 源码，部分流程增加中文注释
+- **SpringBasic** 采用 XML 方式配置 MyBatis、AOP  
+- **SpringMybatisAnnotation** 采用注解方式配置 MyBatis  
+
+## CustomIOC 
+
+### 基础流程分析
+
+1. 创建一级接口 BeanFactory，定义获取 bean instance 最基本方法。
+
+2. 采用设计原则的接口隔离原则，设计二级接口，增加部分功能。（该模块使用 Abstract Class 代理。）
+
+3. 使用默认实现类 DefaultListableFactory 实现一、二级接口功能。
+
+`以上三个步骤实现了 getBean() 功能`
+
+4. DefaultListableFactory 内需要使用数据结构存储 bean 的相关信息及实例。所以根据 xml 标签可以看出来，
+   最好的数据结构为 Map。
+   
+   此处以 **SpringBasic** 模块配置文件为例。
+   
+```xml
+    <!-- 配置 Hikari -->
+    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig" init-method="getDataSource">
+        <property name="jdbcUrl" value="${datasource.url}"/>
+        <property name="poolName" value="${datasource.poolName}"/>
+        <property name="username" value="${datasource.username}"/>
+        <property name="password" value="${datasource.password}"/>
+        <property name="driverClassName" value="${datasource.driverClassName}"/>
+        <property name="maximumPoolSize" value="${datasource.maximumPoolSize}"/>
+        <property name="maxLifetime" value="${datasource.max-leftTime}"/>
+        <property name="dataSourceProperties">
+            <props>
+                <prop key="dataSourceClassName">com.mysql.jdbc.jdbc2.optional.MysqlDataSource</prop>
+                <prop key="cachePrepStmts">true</prop>
+                <prop key="prepStmtCacheSize">250</prop>
+                <prop key="prepStmtCacheSqlLimit">2048</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 注册 DataSource -->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <constructor-arg ref="hikariConfig"/>
+    </bean>
+
+    <!-- 配置事务 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+``` 
+ 
 
 ## AOP 三种实现方式
 
