@@ -75,6 +75,16 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
     }
 
     /**
+     * 如果使用有参构造创建 bean，则需要使用 BeanDefinition 中增加一个属性存储标签
+     * <constructor-arg index="0" value="Hello Bean Factory!"/>
+     * 然后解析 xml 时封装该类，并置于 BeanDefinition 的属性。此模块不再实现。
+     */
+    @Override
+    public Object getBean(String beanName, String... args) {
+        return super.getBean(beanName, args);
+    }
+
+    /**
      * 根据类名（全路径）、构造参数创建类实例
      *
      * @param beanName 类名（全路径）

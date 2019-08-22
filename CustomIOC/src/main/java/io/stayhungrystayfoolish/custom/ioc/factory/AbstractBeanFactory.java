@@ -11,4 +11,9 @@ public abstract class AbstractBeanFactory implements BeanFactory{
     public Object getBean(String beanName) {
         return null;
     }
+
+    @Override
+    public Object getBean(String beanName, String... args) {
+        return null;
+    }
 }
