@@ -53,12 +53,16 @@
    
    b. 存储 bean 的实例 **Map<String, Object> singletonBeanMap**
    
+---
+   
 5. **BeanDefinition** 应该存储标签中的 id、class、init-method 以及 **PropertyValue** 封装的 *'<property'>* 标签信息
 
 6. **PropertyValue** 存储的 *value* 必须是 Object 类型，因为 *'<property'>* 的 *name* 是固定的，但是 *value* 和 *ref* 都是 String 类型。
    所以 *value* 应该有 **TypeStringValue** 封装类来存储 value 的**属性值和属性数据类型**（根据类型、值进行**依赖注入**），*ref* 使用 **RuntimeBeanReference** 来存储字符串（*ref* 在创建 bean instance 时，通过反射获取 ref 的 ClassName 并进行实例创建）。
    
-7. 使用加载 xml 方式，使用 **Resource** 接口获取 IO 流进行解析。      
+7. 使用加载 xml 方式，使用 **Resource** 接口获取 IO 流进行解析。     
+
+--- 
 
 ## AOP 三种实现方式
 
@@ -201,6 +205,8 @@
 
     默认为 false，使用 JDK 动态代理。同理 @EnableAspectJAutoProxy 也拥有该属性。   
 
+---
+
 ### 事务传播机制
 
 ```java
@@ -289,6 +295,8 @@
 
 5. 配置错误（参考 spring-aop.xml）
 
+---
+
 ### 事务隔离级别
 
 ```java
@@ -352,6 +360,8 @@
 > 对于多数应用程序，可以优先考虑把数据库系统的隔离级别设为 **READ_COMMITTED**。它能够避免更新丢失、脏读，而且具有较好的并发性能。
 > 尽管它会导致不可重复读、幻读这些并发问题，在可能出现这类问题的个别场合，可以由应用程序采用悲观锁或乐观锁来控制。
 
+---
+
 ### 事务关键词
 
 - **原子性（Atomicity）**
@@ -401,6 +411,8 @@
 
 **注意：**  使用乐观锁时多数实现方法是使用版本号，或者时间戳。但是如果事务的隔离级别允许重复读（比如：REPEATABLE_READ；MySQL InnoDB 默认也是这个级别），那么使用乐观锁是查询不出版本或者时间戳的变化的，但是 Oracle 的话默认就可以。
 
+---
+
 ### 事务超时问题
 
 - @Transactional 注释不适用于 JDBC **读取超时异常**。
@@ -420,13 +432,4 @@
     https://benjaminwhx.com/2018/02/01/JDBC%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98%E5%85%A8%E9%9D%A2%E5%88%86%E6%9E%90/
  
  ----
- ## Spring IOC 核心基础流程
- 
- - 核心继承体系
- 
- 1. BeanFactory（Bean 工厂）
- 
- 2. BeanDefinition（Bean 装备信息）
- 
- 3. ApplicationContext（Bean 工厂入口）
  
