@@ -1,5 +1,6 @@
 package io.stayhungrystayfoolish.custom.ioc.config;
 
+import io.stayhungrystayfoolish.custom.ioc.factory.DefaultListableBeanFactory;
 import org.dom4j.Element;
 
 import java.util.List;
@@ -10,6 +11,12 @@ import java.util.List;
  * @Version: 1.0
  */
 public class XmlBeanDefinitionDocumentParser {
+
+    private DefaultListableBeanFactory beanFactory;
+
+    public XmlBeanDefinitionDocumentParser(DefaultListableBeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
 
     /**
      * 解析 XML 标签信息
@@ -52,6 +59,12 @@ public class XmlBeanDefinitionDocumentParser {
             // 创建 BeanDefinition 对象
             BeanDefinition beanDefinition = new BeanDefinition(beanName, clazz);
             beanDefinition.setInitMethod(initMethod);
+            // 解析 <property> 标签列，封装到 BeanDefinition 中
+            // beanElement.elements() 获取当前标签的子元素
+            List<Element> propertyValues = beanElement.elements();
+            for (Element propertyValue : propertyValues) {
+                parsePropertyElement(propertyValue);
+            }
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -60,5 +73,26 @@ public class XmlBeanDefinitionDocumentParser {
     }
 
     private void parseDefaultElement(Element element) {
+    }
+
+    private void parsePropertyElement(Element propertyValue) {
+        if (null == propertyValue) {
+            return;
+        }
+        String name = propertyValue.attributeValue("name");
+        String value = propertyValue.attributeValue("value");
+        String ref = propertyValue.attributeValue("ref");
+
+        // 如果 value 和 ref 都有值，则配置错误，直接返回
+        if (("".equals(value)) && ("".equals(ref))) {
+            return;
+        }
+
+        PropertyValue pv = null;
+
+        if (null != value && !"".equals(value)) {
+            TypeStringValue typeStringValue = new TypeStringValue(value);
+
+        }
     }
 }

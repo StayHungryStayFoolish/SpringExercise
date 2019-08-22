@@ -1,5 +1,6 @@
 package io.stayhungrystayfoolish.custom.ioc.config;
 
+import io.stayhungrystayfoolish.custom.ioc.factory.DefaultListableBeanFactory;
 import io.stayhungrystayfoolish.custom.ioc.util.DocumentReader;
 import org.dom4j.Document;
 
@@ -12,10 +13,10 @@ import java.io.InputStream;
  */
 public class XmlBeanDefinitionParser {
 
-    public void loadBeanDefinitions(Resource resource) {
+    public void loadBeanDefinitions(DefaultListableBeanFactory beanFactory, Resource resource) {
         InputStream inputStream = resource.getInputStream();
         Document document = DocumentReader.createDocument(inputStream);
-        XmlBeanDefinitionDocumentParser documentParser = new XmlBeanDefinitionDocumentParser();
+        XmlBeanDefinitionDocumentParser documentParser = new XmlBeanDefinitionDocumentParser(beanFactory);
         documentParser.loadBeanDefinitions(document.getRootElement());
     }
 }
