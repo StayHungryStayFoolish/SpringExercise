@@ -11,6 +11,7 @@
     <modules>
         <module>SpringBasic</module>
         <module>SpringMybatisAnnotation</module>
+        <module>CustomIOC</module>
     </modules>
 
     <dependencies>
