@@ -111,5 +111,12 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
         return ReflectUtil.generateClassInstance(beanName, args);
     }
 
-
+    /**
+     * 将 beanName 和其对应的 BeanDefinition 存入 Map 8盒中
+     * @param beanName beanName (id、name、className 三者其中一个)
+     * @param beanDefinition xml 文件中 <bean> 标签信息封装类
+     */
+    public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
+        this.beanDefinitionMap.put(beanName, beanDefinition);
+    }
 }

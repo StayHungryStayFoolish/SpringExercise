@@ -30,13 +30,11 @@ public class XmlBeanDefinitionDocumentParser {
             String name = element.getName();
             if ("bean".equalsIgnoreCase(name)) {
                 parseDefaultElement(element);
-            } else {
-                parseCustomElement(element);
             }
         }
     }
 
-    private void parseCustomElement(Element beanElement) {
+    private void parseDefaultElement(Element beanElement) {
         if (null == beanElement) {
             return;
         }
@@ -74,13 +72,20 @@ public class XmlBeanDefinitionDocumentParser {
 
     }
 
+    /**
+     * 调用 DefaultListableFactory 注册 bean 信息到 Map 集合
+     * @param beanName bean name
+     * @param beanDefinition xml <bean> 标签内信息的封装类
+     */
     private void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
-        this.beanFactory.regi
+        this.beanFactory.registerBeanDefinition(beanName, beanDefinition);
     }
 
-    private void parseDefaultElement(Element element) {
-    }
-
+    /**
+     * 解析 <bean> 标签内的 <property name="" , value =""> / <property name="" , ref =""> 标签集
+     * @param beanDefinition xml 信息封装类
+     * @param propertyValue <property> 标签集
+     */
     private void parsePropertyElement(BeanDefinition beanDefinition, Element propertyValue) {
         if (null == propertyValue) {
             return;
@@ -94,6 +99,7 @@ public class XmlBeanDefinitionDocumentParser {
             return;
         }
 
+        // 创建属性值对象，进行封装
         PropertyValue pv = null;
 
         if (null != value && !"".equals(value)) {
