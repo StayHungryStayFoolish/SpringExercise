@@ -13,6 +13,11 @@ import java.io.InputStream;
  */
 public class XmlBeanDefinitionParser {
 
+    /**
+     * 加载 XML 资源，最终由 XmlBeanDefinitionDocumentParser 解析封装进 BeanDefinition 中，并注册到 DefaultListableFactory 中。
+     * @param beanFactory DefaultListableFactory
+     * @param resource resource（获取 xml 路径的 IO ）
+     */
     public void loadBeanDefinitions(DefaultListableBeanFactory beanFactory, Resource resource) {
         InputStream inputStream = resource.getInputStream();
         Document document = DocumentReader.createDocument(inputStream);

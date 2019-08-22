@@ -1,9 +1,6 @@
 package io.stayhungrystayfoolish.custom.ioc.factory;
 
-import io.stayhungrystayfoolish.custom.ioc.config.BeanDefinition;
-import io.stayhungrystayfoolish.custom.ioc.config.ClassPathResource;
-import io.stayhungrystayfoolish.custom.ioc.config.Resource;
-import io.stayhungrystayfoolish.custom.ioc.config.XmlBeanDefinitionParser;
+import io.stayhungrystayfoolish.custom.ioc.config.*;
 import io.stayhungrystayfoolish.custom.ioc.converter.*;
 import io.stayhungrystayfoolish.custom.ioc.util.ReflectUtil;
 
@@ -55,8 +52,96 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
         if (null == resource) {
             throw new NullPointerException();
         }
-        // 执行加载 
-        xmlBeanDefinitionParser.loadBeanDefinitions(resource);
+        // 执行加载 xml IO 流
+        xmlBeanDefinitionParser.loadBeanDefinitions(this, resource);
+    }
+
+    @Override
+    public Object getBean(String beanName) {
+        Object instance = singletonBeanMap.get(beanName);
+        if (null != instance) {
+            return instance;
+        }
+        // 如果单例不存在于工程，则根据 beanName 获取 bean 信息
+        BeanDefinition beanDefinition = getBeanDefinitionMap().get(beanName);
+        String beanClassName = beanDefinition.getBeanClassName();
+        // 使用无参构造
+        instance = createBeanInstance(beanClassName, null);
+        // 注入属性 （DI）
+        setInstanceProperty(instance, beanDefinition);
+        // 初始化
+        initInstance(instance, beanDefinition);
+        return instance;
+    }
+
+    /**
+     * 根据类名（全路径）、构造参数创建类实例
+     *
+     * @param beanName 类名（全路径）
+     * @param args     构造参数
+     * @return 类实例
+     */
+    private Object createBeanInstance(String beanName, Object... args) {
+        return ReflectUtil.generateClassInstance(beanName, args);
+    }
+
+    /**
+     * 根据实例、xml bean 信息封装类进行属性注入（DI）
+     *
+     * @param instance       bean 实例
+     * @param beanDefinition xml bean 封装类
+     */
+    private void setInstanceProperty(Object instance, BeanDefinition beanDefinition) {
+        // 获取属性名、（属性值 + 属性类型）的封装对象
+        List<PropertyValue> propertyValues = beanDefinition.getPropertyValues();
+        for (PropertyValue propertyValue : propertyValues) {
+            String name = propertyValue.getName();
+            // value 由两种类型： TypeStringValue 和 RuntimeBeanReference
+            Object value = propertyValue.getValue();
+            // 声明注入值
+            Object injectValue = null;
+            if (value instanceof TypeStringValue) {
+                TypeStringValue typeStringValue = (TypeStringValue) value;
+                String stringValue = typeStringValue.getValue();
+                // 获取属性值得类型
+                Class<?> targetType = typeStringValue.getTargetType();
+                for (TypeConverter converter : typeConverters) {
+                    if (converter.isType(targetType)) {
+                        injectValue = converter.convert(stringValue);
+                    }
+                }
+            } else if (value instanceof RuntimeBeanReference) {
+                RuntimeBeanReference reference = (RuntimeBeanReference) value;
+                String ref = reference.getRef();
+                injectValue = getBean(ref);
+            }
+            // 使用反射注入 bean 属性
+            ReflectUtil.setFiledValueByFiledName(instance, name, injectValue);
+        }
+    }
+
+    /**
+     * 根据实例、xml bean 信息封装类调用 init-method 方法
+     *
+     * @param instance       bean 实例
+     * @param beanDefinition xml bean 封装类
+     */
+    private void initInstance(Object instance, BeanDefinition beanDefinition) {
+        String initMethod = beanDefinition.getInitMethod();
+        if (null == initMethod || "".equals(initMethod)) {
+            return;
+        }
+        ReflectUtil.invokeMethod(instance, initMethod);
+    }
+
+    /**
+     * 将 beanName 和其对应的 BeanDefinition 存入 Map 8盒中
+     *
+     * @param beanName       beanName (id、name、className 三者其中一个)
+     * @param beanDefinition xml 文件中 <bean> 标签信息封装类
+     */
+    public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
+        this.beanDefinitionMap.put(beanName, beanDefinition);
     }
 
     /**
@@ -91,32 +176,7 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
         return null;
     }
 
-    @Override
-    public Object getBean(String beanName) {
-        Object instance = singletonBeanMap.get(beanName);
-        if (null != instance) {
-            return instance;
-        }
-        BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
-        return super.getBean(beanName);
-    }
-
-    /**
-     * 根据类名（全路径）、构造参数创建类实例
-     * @param beanName 类名（全路径）
-     * @param args 构造参数
-     * @return 类实例
-     */
-    private Object createBeanInstance(String beanName, Object... args) {
-        return ReflectUtil.generateClassInstance(beanName, args);
-    }
-
-    /**
-     * 将 beanName 和其对应的 BeanDefinition 存入 Map 8盒中
-     * @param beanName beanName (id、name、className 三者其中一个)
-     * @param beanDefinition xml 文件中 <bean> 标签信息封装类
-     */
-    public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
-        this.beanDefinitionMap.put(beanName, beanDefinition);
+    public Map<String, BeanDefinition> getBeanDefinitionMap() {
+        return beanDefinitionMap;
     }
 }
