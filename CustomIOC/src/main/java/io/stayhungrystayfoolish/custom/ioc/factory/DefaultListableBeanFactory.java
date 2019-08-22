@@ -54,6 +54,8 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
         if (null == resource) {
             throw new NullPointerException();
         }
+        // 执行加载 
+        xmlBeanDefinitionParser.loadBeanDefinitions(resource);
     }
 
     /**
