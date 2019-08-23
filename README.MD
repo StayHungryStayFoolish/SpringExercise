@@ -53,8 +53,6 @@
    
    b. 存储 bean 的实例 **Map<String, Object> singletonBeanMap**
    
----
-   
 5. **BeanDefinition** 应该存储标签中的 id、class、init-method 以及 **PropertyValue** 封装的 *'<property'>* 标签信息
 
 6. **PropertyValue** 存储的 *value* 必须是 Object 类型，因为 *'<property'>* 的 *name* 是固定的，但是 *value* 和 *ref* 都是 String 类型。
