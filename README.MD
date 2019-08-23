@@ -24,7 +24,7 @@
    
    此处以 **SpringBasic** 模块配置文件为例。
    
-  ```xml
+    ```xml
     <!-- 配置 Hikari -->
     <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig" init-method="getDataSource">
         <property name="jdbcUrl" value="${datasource.url}"/>
