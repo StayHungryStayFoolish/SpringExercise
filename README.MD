@@ -71,21 +71,21 @@
     
     - 根据具体核心业务场景，针对具体类或具体方法，选择相应的通知方式
     
-        > before 目标方法调用前，执行此 advice
+        - before 目标方法调用前，执行此 advice
                                         
-        > around 目标方法调用前、调用后处理，执行此 advice（当抛出异常，立即退出，会转向 after advice，执行完转到 throwing advice）
+        - around 目标方法调用前、调用后处理，执行此 advice（当抛出异常，立即退出，会转向 after advice，执行完转到 throwing advice）
         
-        > after 目标方法正常结束、异常都执行此 advice
+        - after 目标方法正常结束、异常都执行此 advice
                                                                                                                                                                                                                       
-        > after returning 目标方法调用正常结束，不管有无返回结果，执行此 advice
+        - after returning 目标方法调用正常结束，不管有无返回结果，执行此 advice
                                                                                                                                                                                                                       
-        > after throwing 目标方法执行异常退出，执行此 advice
+        0 after throwing 目标方法执行异常退出，执行此 advice
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 - xml 配置                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
     
-    > 参考 SpringBasic 模块
-    >                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-    >> XMLAdvice 和 spring-aop.xml，测试通知在 UserServiceImpl 需要打开或关闭人为异常。
+    - 参考 SpringBasic 模块
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+        - XMLAdvice 和 spring-aop.xml，测试通知在 UserServiceImpl 需要打开或关闭人为异常。
 
 
 ### XML 和注解混合
@@ -94,15 +94,15 @@
 
     - 定义通知方式
         
-        > @Before
+        - @Before
                               
-        > @Around
+        - @Around
                                                                                        
-        > @After
+        - @After
                                                                                                                                                                                                          
-        > @AfterReturning(pointcut="..")
+        - @AfterReturning(pointcut="..")
                                                                                                                                                                                                                                                                                                                                                                                                                                             
-        > @AfterThrowing(pointcut="..",throwing="方法内的 throwable 参数")
+        - @AfterThrowing(pointcut="..",throwing="方法内的 throwable 参数")
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
             其中 @AfterReturning 和 @AfterThrowing 中，既可以用 pointcut 也可以使用 value
             具体区别为：两者都定义，pointcut 优先于 value，
@@ -110,19 +110,21 @@
             
 - xml 配置
 
-    > 参考 SpringBasic 模块
-    >> SimpleAspect 和 spring-annotation.xml，测试通知在 UserServiceImpl 需要打开或关闭人为异常。
-    >>> 注意 SimpleAspect 中 @Pointcut 注解及commonPointcut方法用法。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+    - 参考 SpringBasic 模块
+    
+        - SimpleAspect 和 spring-annotation.xml，测试通知在 UserServiceImpl 需要打开或关闭人为异常。
+    
+        - 注意 SimpleAspect 中 @Pointcut 注解及 commonPointcut 方法用法。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 
 ### 纯注解
 
  - 使用注解开启 AOP 
  
-     > @Configuration
-     > 
-     > @EnableAspectJAutoProxy
-     > 
-     > @ComponentScan(basePackages=""")
+     - @Configuration
+      
+     - @EnableAspectJAutoProxy
+      
+     - @ComponentScan(basePackages=""")
 
  - xml 项目模块，所以纯注解未实现。
 
@@ -130,56 +132,60 @@
 
 ### 部分配置区别
 
-        <!-- 定义切面，aspect 标签用法 -->
-        <aop:config>
-            <aop:aspect ref="xmlAdvice">
-                <aop:pointcut id="userPointcut" expression="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))" />
-                <aop:before method="xmlBeforeAdvice" pointcut-ref="userPointcut" />
-            </aop:aspect>  
-        </aop:config>
+  ```xml
+    
+     <!-- 定义切面，aspect 标签用法 -->
+     <aop:config>
+         <aop:aspect ref="xmlAdvice">
+             <aop:pointcut id="userPointcut" expression="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))" />
+             <aop:before method="xmlBeforeAdvice" pointcut-ref="userPointcut" />
+         </aop:aspect>  
+     </aop:config>
+     
+     <!-- 定义通知器，advisor 标签用法 -->                      
+     <aop:config>
+         <aop:pointcut id="userPointcut" expression="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))" />
+         <aop:advisor advice-ref="xmlBeforeAdvice" pointcut-ref="userPointcut" />
+     </aop:config>
+```
+
         
-        <!-- 定义通知器，advisor 标签用法 -->                      
-        <aop:config>
-            <aop:pointcut id="userPointcut" expression="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))" />
-            <aop:advisor advice-ref="xmlBeforeAdvice" pointcut-ref="userPointcut" />
-        </aop:config>
-        
--         
-    > 如果使用 aspect 标签，在 XMLAdvice 中直接定义一般方法即可。
-    >
-    > 如果使用 advisor 标签，在 XMLAdvice 中则需要实现类似 MethodBeforeAdvice、AfterReturningAdvice 等接口，在实现方法中分别定义通知方式。 
-    >
-    > 推荐使用 aop:aspect 标签       
+    
+ - 如果使用 aspect 标签，在 XMLAdvice 中直接定义一般方法即可。
+
+ - 如果使用 advisor 标签，在 XMLAdvice 中则需要实现类似 MethodBeforeAdvice、AfterReturningAdvice 等接口，在实现方法中分别定义通知方式。 
+ 
+ - 推荐使用 aop:aspect 标签       
 
 ### Pointcut 语法
 
 - execution(* io.stayhungrystayfoolish.aop.service..*.*(..))
 
-> execution() 表达式主体
->
-> 第一个 * 符号，返回值任意类型
->
-> io.stayhungrystayfoolish.aop.service 包名
->
-> 第一个 .. 表示当前包及其子包
->
-> 第二个 * 符号表示所有类
->
-> .*(..)  第三个 * 符号表示任意方法名 (..) 表示任意参数类型、参数个数
+  - execution() 表达式主体
 
-**其他指示符如 within、this、target、args、@within、@target、@args 等等，并且支持 &&、||、! 逻辑符号**
+  - 第一个 * 符号，返回值任意类型
+  
+  - io.stayhungrystayfoolish.aop.service 包名
+
+  - 第一个 .. 表示当前包及其子包
+
+  - 第二个 * 符号表示所有类
+
+  - .*(..)  第三个 * 符号表示任意方法名 (..) 表示任意参数类型、参数个数
+
+  **其他指示符如 within、this、target、args、@within、@target、@args 等等，并且支持 &&、||、! 逻辑符号**
 
 ---
 
 ## 事务 Transactional 的传播机制与隔离级别
 
-1）Spring 的声明式事务管理在底层是建立在 AOP 的基础之上的。其本质是对方法**前后**进行拦截，然后在目标方法开始之前创建或者加入一个事务，在执行完目标方法之后根据执行情况提交或者回滚事务。
+  1）Spring 的声明式事务管理在底层是建立在 AOP 的基础之上的。其本质是对方法**前后**进行拦截，然后在目标方法开始之前创建或者加入一个事务，在执行完目标方法之后根据执行情况提交或者回滚事务。
 
-2）声明式事务最大的优点就是不需要通过编程的方式管理事务，这样就不需要在业务逻辑代码中掺杂事务管理的代码，只需在配置文件中做相关的事务规则声明（或通过等价的基于标注的方式），便可以将事务规则应用到业务逻辑中。因为事务管理本身就是一个典型的横切逻辑，正是 AOP 的用武之地。Spring 开发团队也意识到了这一点，为声明式事务提供了简单而强大的支持。
-
-3）声明式事务管理曾经是 EJB 引以为傲的一个亮点， Spring 让 POJO 在事务管理方面也拥有了和 EJB 一样的待遇，让开发人员在 EJB 容器之外也用上了强大的声明式事务管理功能，这主要得益于 Spring 依赖注入容器和 Spring AOP 的支持。依赖注入容器为声明式事务管理提供了基础设施，使得 Bean 对于 Spring 框架而言是可管理的；而 Spring AOP 则是声明式事务管理的直接实现者。
-
-4）建议在开发中使用声明式事务，不仅因为其简单，更主要是因为这样使得纯业务代码不被污染，极大方便后期的代码维护。和编程式事务相比，声明式事务唯一不足地方是，后者的最细粒度只能作用到方法级别，无法做到像编程式事务那样可以作用到代码块级别。但是即便有这样的需求，也存在很多变通的方法，比如，可以将需要进行事务管理的代码块独立为方法等等。
+  2）声明式事务最大的优点就是不需要通过编程的方式管理事务，这样就不需要在业务逻辑代码中掺杂事务管理的代码，只需在配置文件中做相关的事务规则声明（或通过等价的基于标注的方式），便可以将事务规则应用到业务逻辑中。因为事务管理本身就是一个典型的横切逻辑，正是 AOP 的用武之地。Spring 开发团队也意识到了这一点，为声明式事务提供了简单而强大的支持。
+  
+  3）声明式事务管理曾经是 EJB 引以为傲的一个亮点， Spring 让 POJO 在事务管理方面也拥有了和 EJB 一样的待遇，让开发人员在 EJB 容器之外也用上了强大的声明式事务管理功能，这主要得益于 Spring 依赖注入容器和 Spring AOP 的支持。依赖注入容器为声明式事务管理提供了基础设施，使得 Bean 对于 Spring 框架而言是可管理的；而 Spring AOP 则是声明式事务管理的直接实现者。
+  
+  4）建议在开发中使用声明式事务，不仅因为其简单，更主要是因为这样使得纯业务代码不被污染，极大方便后期的代码维护。和编程式事务相比，声明式事务唯一不足地方是，后者的最细粒度只能作用到方法级别，无法做到像编程式事务那样可以作用到代码块级别。但是即便有这样的需求，也存在很多变通的方法，比如，可以将需要进行事务管理的代码块独立为方法等等。
 
 - <proxy-target-class="false/true"> 作用
 
@@ -208,7 +214,7 @@
 
 ### 事务传播机制
 
-```java
+  ```java
    public enum Propagation {
        REQUIRED(0),
        SUPPORTS(1),
@@ -235,17 +241,16 @@
     如果有事务，则加入事务，没有新建。
    （ClassA methodA 方法调用 ClassB methodB 方法，如果 methodA 前不存在任何事务，开启一个新事务，methodA 调用 methodB 时，事务已经存在，methodB 会使用已存在的事务）
     
-2. SUPPORTS
+2. SUPPORTS **（不推荐使用）**
 
     其他 Bean 调用该事务所在方法，其他 Bean 中声明事务则用启用事务，若其他 Bean 没有，则不启用事务。
-   **（一般不推荐使用）**
-    
+   
 3. MANDATORY
 
     必须在已有事务中执行，否则抛出异常。
    （使用该传播机制的事务，不能单独对外提供，因为只能存在于一个已经开启事务的方法中。）
     
-4. REQUIRES_NEW（外部事务和内部事务互相独立）
+4. REQUIRES_NEW **（外部事务和内部事务互相独立）**
 
     无论是否存在事务，都会新建事务，原事务挂起，新事务执行完毕，继续执行原事务。
     内部的事务独立运行，在各自的作用域中，可以独立的回滚或者提交；而外部的事务将不受内部事务的回滚状态影响。 
@@ -258,7 +263,7 @@
 
     必须在无事务中执行，否则抛出异常。如果存在一个活动事务，抛出异常。
     
-7. NESTED（内部事务和外部事务有关联，会互相影响）
+7. NESTED **（内部事务和外部事务有关联，会互相影响）**
 
     如果一个事务存在，则运行在一个嵌套的事务中。如果没有按照 REQUIRED 执行。
     NESTED 基于单一的事务来管理，提供了多个保存点。
@@ -271,13 +276,13 @@
 
 - **常见事务失效原因**
 
-1. 抛出异常不属于 RunTimeException （unchecked 异常）及其子类
+  1. 抛出异常不属于 RunTimeException （unchecked 异常）及其子类
 
-2. 异常在该方法被 try...catch，如果需要 try...catch，则在 catch 内使用 throw 也可以使事务重新生效。
+  2. 异常在该方法被 try...catch，如果需要 try...catch，则在 catch 内使用 throw 也可以使事务重新生效。
 
-3. 同一类中 Method_A 调用 Method_B 不会使事务生效。
-   前提：类上没有 @Transactional 注解，且 Method_A 对外方法没有 @Transactional 注解，只在 Method_B 方法上加该注解。
-   则 Method_A 对外方法事务不生效，因为 @Transactional 注解只能用在对外方法上。
+  3. 同一类中 Method_A 调用 Method_B 不会使事务生效。
+     前提：类上没有 @Transactional 注解，且 Method_A 对外方法没有 @Transactional 注解，只在 Method_B 方法上加该注解。
+     则 Method_A 对外方法事务不生效，因为 @Transactional 注解只能用在对外方法上。
    
        测试事务自调用，Method_A 调用 Method_B 方法，如需事务生效，需要打开此配置
        
@@ -298,7 +303,7 @@
 
 ### 事务隔离级别
 
-```java
+  ```java
     public enum Isolation {
         DEFAULT(-1),
         READ_UNCOMMITTED(1),
@@ -355,9 +360,11 @@
     此隔离级别可以防止**更新丢失、脏读、不可重复读、幻读**。
     如果仅仅通过**行级锁**是无法实现事务序列化的，必须通过其他机制保证新插入的数据不会被刚执行查询操作的事务访问到。
 
-> 隔离级别越高，越能保证数据的完整性和一致性，但是对并发性能的影响也越大。
-> 对于多数应用程序，可以优先考虑把数据库系统的隔离级别设为 **READ_COMMITTED**。它能够避免更新丢失、脏读，而且具有较好的并发性能。
-> 尽管它会导致不可重复读、幻读这些并发问题，在可能出现这类问题的个别场合，可以由应用程序采用悲观锁或乐观锁来控制。
+ 隔离级别越高，越能保证数据的完整性和一致性，但是对并发性能的影响也越大。 
+  
+ 对于多数应用程序，可以优先考虑把数据库系统的隔离级别设为 **READ_COMMITTED**。它能够避免更新丢失、脏读，而且具有较好的并发性能。
+ 
+ 尽管它会导致不可重复读、幻读这些并发问题，在可能出现这类问题的个别场合，可以由应用程序采用悲观锁或乐观锁来控制。
 
 ---
 
@@ -426,8 +433,11 @@
   
 - **参考文章**：
     https://www.cubrid.org/blog/understanding-jdbc-internals-and-timeout-configuration
+    
     https://codete.com/blog/5-common-spring-transactional-pitfalls/
-    http://www.heartthinkdo.com/?p=910  
+    
+    http://www.heartthinkdo.com/?p=910
+      
     https://benjaminwhx.com/2018/02/01/JDBC%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98%E5%85%A8%E9%9D%A2%E5%88%86%E6%9E%90/
  
  ----
