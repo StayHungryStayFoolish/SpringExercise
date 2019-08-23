@@ -46,11 +46,7 @@ public class ReflectUtil {
                             // 遍历入参参数
                             for (Object arg : args) {
                                 // 如果入参参数类型与构造器参数类型一致，设为 true
-                                if (constructorParameterType == arg.getClass()) {
-                                    paramTypeCoincide = true;
-                                } else {
-                                    paramTypeCoincide = false;
-                                }
+                                paramTypeCoincide = constructorParameterType == arg.getClass();
                             }
                         }
                         // 当参数类型一致时，通过构造器生成实例
