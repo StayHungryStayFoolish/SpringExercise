@@ -189,26 +189,26 @@
 
 - **<proxy-target-class="false/true"> 作用**
 
-1. **proxy-target-class** 属性值来控制是基于接口的还是基于类的代理被创建。 
+  1. **proxy-target-class** 属性值来控制是基于接口的还是基于类的代理被创建。 
 
-2. <tx:annotation-driven transaction-manager=“transactionManager” proxy-target-class=“true”/> 
+  2. <tx:annotation-driven transaction-manager=“transactionManager” proxy-target-class=“true”/> 
 
-   如果 proxy-target-class 属性值被设置为 **true**，那么基于类的代理将起作用（这时需要 CGLIB 库）。
-   如果 proxy-target-class 属值被设置为 **false** 或者这个属性被省略，那么标准的JDK 基于接口的代理。
-   注解 @Transactional CGLIB 与 JAVA 动态代理最大区别是代理目标对象不用实现接口，那么注解要是写到接口方法上，要是使用 CGLIB 代理，这是注解事物就失效了，为了保持兼容注解最好都写到实现类方法上。
-   Spring 团队建议在具体的类（或类的方法）上使用 @Transactional 注解，而不要使用在类所要实现的任何接口上。在接口上使用 @Transactional 注解，只能当你设置了基于接口的代理时它才生效。
-   因为注解是不能继承的，这就意味着如果正在使用基于类的代理时，那么事务的设置将不能被基于类的代理所识别，而且对象也将不会被事务代理所包装。
-   @Transactional 的事务开启 ，或者是基于接口的 或者是基于类的代理被创建。所以在同一个类中一个方法调用另一个方法有事务的方法，事务是不会起作用的。
-    
-   **原因：**（这也是为什么在项目中有些 @Async 并没有异步执行） Spring 在扫描 Bean 的时候会扫描方法上是否包含 @Transactional 注解，
-   如果包含，Spring 会为这个 Bean 动态地生成一个子类（即代理类，proxy），代理类是继承原来那个 Bean 的。
-   此时，当这个有注解的方法被调用的时候，实际上是由代理类来调用的，代理类在**调用之前**就会启动 Transaction。
-   然而，如果这个有注解的方法是被同一个类中的其他方法调用的，那么该方法的调用并没有通过代理类，而是直接通过原来的那个bean，
-   所以就不会启动 Transaction，我们看到的现象就是 @Transactional 注解无效。
+     如果 proxy-target-class 属性值被设置为 **true**，那么基于类的代理将起作用（这时需要 CGLIB 库）。
+     如果 proxy-target-class 属值被设置为 **false** 或者这个属性被省略，那么标准的JDK 基于接口的代理。
+     注解 @Transactional CGLIB 与 JAVA 动态代理最大区别是代理目标对象不用实现接口，那么注解要是写到接口方法上，要是使用 CGLIB 代理，这是注解事物就失效了，为了保持兼容注解最好都写到实现类方法上。
+     Spring 团队建议在具体的类（或类的方法）上使用 @Transactional 注解，而不要使用在类所要实现的任何接口上。在接口上使用 @Transactional 注解，只能当你设置了基于接口的代理时它才生效。
+     因为注解是不能继承的，这就意味着如果正在使用基于类的代理时，那么事务的设置将不能被基于类的代理所识别，而且对象也将不会被事务代理所包装。
+     @Transactional 的事务开启 ，或者是基于接口的 或者是基于类的代理被创建。所以在同一个类中一个方法调用另一个方法有事务的方法，事务是不会起作用的。
+      
+     **原因：**（这也是为什么在项目中有些 @Async 并没有异步执行） Spring 在扫描 Bean 的时候会扫描方法上是否包含 @Transactional 注解，
+     如果包含，Spring 会为这个 Bean 动态地生成一个子类（即代理类，proxy），代理类是继承原来那个 Bean 的。
+     此时，当这个有注解的方法被调用的时候，实际上是由代理类来调用的，代理类在**调用之前**就会启动 Transaction。
+     然而，如果这个有注解的方法是被同一个类中的其他方法调用的，那么该方法的调用并没有通过代理类，而是直接通过原来的那个bean，
+     所以就不会启动 Transaction，我们看到的现象就是 @Transactional 注解无效。
    
-3. 注解形式 @EnableTransactionManagement(proxyTargetClass = false)
+  3. 注解形式 @EnableTransactionManagement(proxyTargetClass = false)
 
-    默认为 false，使用 JDK 动态代理。同理 @EnableAspectJAutoProxy 也拥有该属性。   
+     默认为 false，使用 JDK 动态代理。同理 @EnableAspectJAutoProxy 也拥有该属性。   
 
 ---
 
@@ -239,6 +239,7 @@
 1. REQUIRED （事务传播默认机制）
     
     如果有事务，则加入事务，没有新建。
+    
    （ClassA methodA 方法调用 ClassB methodB 方法，如果 methodA 前不存在任何事务，开启一个新事务，methodA 调用 methodB 时，事务已经存在，methodB 会使用已存在的事务）
     
 2. SUPPORTS **（不推荐使用）**
@@ -248,11 +249,13 @@
 3. MANDATORY
 
     必须在已有事务中执行，否则抛出异常。
+    
    （使用该传播机制的事务，不能单独对外提供，因为只能存在于一个已经开启事务的方法中。）
     
 4. REQUIRES_NEW **（外部事务和内部事务互相独立）**
 
     无论是否存在事务，都会新建事务，原事务挂起，新事务执行完毕，继续执行原事务。
+    
     内部的事务独立运行，在各自的作用域中，可以独立的回滚或者提交；而外部的事务将不受内部事务的回滚状态影响。 
     
 5. NOT_SUPPORTED
@@ -432,6 +435,7 @@
   源码 **DataSourceUtils.applyTimeout()**
   
 - **参考文章**：
+    
     https://www.cubrid.org/blog/understanding-jdbc-internals-and-timeout-configuration
     
     https://codete.com/blog/5-common-spring-transactional-pitfalls/
