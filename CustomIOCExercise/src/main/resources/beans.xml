@@ -1,0 +1,21 @@
+<beans>
+    <bean id="student" class="io.stayhungrystayfoolish.custom.ioc.exercise.domain.Student">
+        <!-- 基本类型 -->
+        <property name="name" value="bonismo"></property>
+        <property name="age" value="18"></property>
+        <property name="marry" value="false"></property>
+        <!-- 引用类型 -->
+        <property name="course" ref="course"></property>
+    </bean>
+
+    <!-- 该类有一个初始化方法 -->
+    <bean id="course" class="io.stayhungrystayfoolish.custom.ioc.exercise.domain.Course" init-method="init">
+        <!-- String类型 -->
+        <property name="subject" value="Spring"></property>
+        <!-- Integer类型 -->
+        <property name="day" value="30"></property>
+<!--        <constructor-arg index="0" value="james" /> -->
+    </bean>
+
+    <!-- <context:property-placeholder location="" /> -->
+</beans>

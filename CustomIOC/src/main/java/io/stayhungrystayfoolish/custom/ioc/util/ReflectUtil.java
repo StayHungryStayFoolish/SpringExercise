@@ -26,32 +26,40 @@ public class ReflectUtil {
             // 获取构造器列表
             Constructor[] constructors = clazz.getDeclaredConstructors();
             // 传入构造器参数数量
-            int paramLength = args.length;
+            int paramCount = 0;
+            if (null != args) {
+                paramCount = args.length;
+            }
             for (Constructor constructor : constructors) {
                 // 获取构造器参数数组
                 Class<?>[] constructorParameterTypes = constructor.getParameterTypes();
                 // 构造器参数数量
-                int constructorLength = constructorParameterTypes.length;
+                int constructorParamCount = constructorParameterTypes.length;
                 // 传入参数 与 构造器参数类型是否一致
                 boolean paramTypeCoincide = false;
                 // 当传入参数数量与构造器参数数量相等时，进入判断，按次序判断参数类型是否一致
-                if (paramLength == constructorLength) {
-                    // 遍历构造器参数类型
-                    for (Class<?> constructorParameterType : constructorParameterTypes) {
-                        // 遍历入参参数
-                        for (Object arg : args) {
-                            // 如果入参参数类型与构造器参数类型一致，设为 true
-                            if (constructorParameterType == arg.getClass()) {
-                                paramTypeCoincide = true;
-                            } else {
-                                paramTypeCoincide = false;
+                // 当入参参数不等于 0 且构造器参数也不等于 0 时才进入判断，有一个等于 0 时直接生成实例
+                if (0 != paramCount && 0 != constructorParamCount) {
+                    if ((paramCount == constructorParamCount)) {
+                        // 遍历构造器参数类型
+                        for (Class<?> constructorParameterType : constructorParameterTypes) {
+                            // 遍历入参参数
+                            for (Object arg : args) {
+                                // 如果入参参数类型与构造器参数类型一致，设为 true
+                                if (constructorParameterType == arg.getClass()) {
+                                    paramTypeCoincide = true;
+                                } else {
+                                    paramTypeCoincide = false;
+                                }
                             }
                         }
+                        // 当参数类型一致时，通过构造器生成实例
+                        if (paramTypeCoincide) {
+                            return constructor.newInstance(args);
+                        }
                     }
-                    // 当参数类型一致时，通过构造器生成实例
-                    if (paramTypeCoincide) {
-                        return constructor.newInstance(args);
-                    }
+                } else {
+                    return constructor.newInstance(null);
                 }
             }
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {

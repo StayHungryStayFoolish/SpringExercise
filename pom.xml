@@ -12,6 +12,7 @@
         <module>SpringBasic</module>
         <module>SpringMybatisAnnotation</module>
         <module>CustomIOC</module>
+        <module>CustomIOCExercise</module>
     </modules>
 
     <properties>

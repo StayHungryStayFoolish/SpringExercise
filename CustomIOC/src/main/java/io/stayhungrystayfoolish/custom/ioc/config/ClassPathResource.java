@@ -33,7 +33,7 @@ public class ClassPathResource implements Resource {
             return null;
         }
         location = location.replace(CLASSPATH, "");
-        return this.getClass().getResourceAsStream(location);
+        return this.getClass().getClassLoader().getResourceAsStream(location);
     }
 
     public String getLocation() {
