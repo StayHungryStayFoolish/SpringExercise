@@ -46,7 +46,7 @@
         <property name="dataSource" ref="dataSource" />
     </bean>
 ``` 
----
+
    根据以上 xml 配置信息，可以简单推导出 **DefaultListableB** 中应该有两个 Map 结构。
    
    a. 存储解析的 xml 信息 **Map<String, BeanDefinition>** 其中 **BeanDefinition** 封装了 xml 中 *'<bean'>* 标签信息
