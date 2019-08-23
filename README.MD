@@ -47,11 +47,12 @@
     </bean>
 ``` 
 
-   根据以上 xml 配置信息，可以简单推导出 **DefaultListableB** 中应该有两个 Map 结构。
+
+根据以上 xml 配置信息，可以简单推导出 **DefaultListableB** 中应该有两个 Map 结构。
    
-   a. 存储解析的 xml 信息 **Map<String, BeanDefinition>** 其中 **BeanDefinition** 封装了 xml 中 *'<bean'>* 标签信息
+a. 存储解析的 xml 信息 **Map<String, BeanDefinition>** 其中 **BeanDefinition** 封装了 xml 中 *'<bean'>* 标签信息
    
-   b. 存储 bean 的实例 **Map<String, Object> singletonBeanMap**
+b. 存储 bean 的实例 **Map<String, Object> singletonBeanMap**
    
 5. **BeanDefinition** 应该存储标签中的 id、class、init-method 以及 **PropertyValue** 封装的 *'<property'>* 标签信息
 
