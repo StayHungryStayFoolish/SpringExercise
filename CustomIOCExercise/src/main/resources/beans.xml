@@ -14,7 +14,6 @@
         <property name="subject" value="Spring"></property>
         <!-- Integer类型 -->
         <property name="day" value="30"></property>
-<!--        <constructor-arg index="0" value="james" /> -->
     </bean>
 
     <!-- <context:property-placeholder location="" /> -->

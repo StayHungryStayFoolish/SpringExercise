@@ -61,6 +61,8 @@ public class XmlBeanDefinitionDocumentParser {
             // 解析 <property> 标签列，封装到 BeanDefinition 中
             // beanElement.elements() 获取当前标签的子元素
             List<Element> propertyValues = beanElement.elements();
+            // 此处只解析 <property> 标签，如果要解析 <constructor-arg> 标签，
+            // 则需要在循环判断。如果是构造器注入，则需要用使用再次解析。演示模块不做处理。
             for (Element propertyValue : propertyValues) {
                 parsePropertyElement(beanDefinition, propertyValue);
             }

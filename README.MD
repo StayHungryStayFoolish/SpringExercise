@@ -3,6 +3,7 @@
 ## 项目模块说明
 
 - **CustomIOC** 实现 Spring BeanFactory 的创建解析基本功能。
+- **CustomIOCExercise** 测试 CustomIOC 功能。
 - **spring-framework-5.0.7.RELEASE** Spring 官方 5.0.7 源码，部分流程增加中文注释
 - **SpringBasic** 采用 XML 方式配置 MyBatis、AOP  
 - **SpringMybatisAnnotation** 采用注解方式配置 MyBatis  
