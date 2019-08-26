@@ -35,6 +35,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.*;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -384,6 +386,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		try {
 			// 解析 xml 文件，形成 Document
 			Document doc = doLoadDocument(inputSource, resource);
+			// 通过解析 Document 对象并获取新注册的 BeanDefinition 数量
 			return registerBeanDefinitions(doc, resource);
 		}
 		catch (BeanDefinitionStoreException ex) {
@@ -412,6 +415,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	}
 
 	/**
+	 * 使用 DocumentFactoryBuilder 创建 Document 对象
 	 * Actually load the specified document using the configured DocumentLoader.
 	 * @param inputSource the SAX InputSource to read from
 	 * @param resource the resource descriptor for the XML file

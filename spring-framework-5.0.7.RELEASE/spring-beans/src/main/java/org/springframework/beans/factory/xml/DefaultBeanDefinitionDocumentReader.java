@@ -134,7 +134,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		if (this.delegate.isDefaultNamespace(root)) {
 			String profileSpec = root.getAttribute(PROFILE_ATTRIBUTE);
 			if (StringUtils.hasText(profileSpec)) {
-				// 解析 xml 文件的 profile 环境配置
+				// 解析 xml 文件的 <beans> 标签内 profile 属性环境配置
 				String[] specifiedProfiles = StringUtils.tokenizeToStringArray(
 						profileSpec, BeanDefinitionParserDelegate.MULTI_VALUE_ATTRIBUTE_DELIMITERS);
 				if (!getReaderContext().getEnvironment().acceptsProfiles(specifiedProfiles)) {

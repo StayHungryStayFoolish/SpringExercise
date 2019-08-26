@@ -74,6 +74,7 @@ public class DefaultDocumentLoader implements DocumentLoader {
 			logger.debug("Using JAXP provider [" + factory.getClass().getName() + "]");
 		}
 		DocumentBuilder builder = createDocumentBuilder(factory, entityResolver, errorHandler);
+		// 解析 InputSource 返回 Document 对象
 		return builder.parse(inputSource);
 	}
 
