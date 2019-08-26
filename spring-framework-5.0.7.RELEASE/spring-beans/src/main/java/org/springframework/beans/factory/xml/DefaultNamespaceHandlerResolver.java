@@ -16,14 +16,8 @@
 
 package org.springframework.beans.factory.xml;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -31,6 +25,11 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Default implementation of the {@link NamespaceHandlerResolver} interface.
@@ -115,6 +114,7 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 	@Override
 	@Nullable
 	public NamespaceHandler resolve(String namespaceUri) {
+		// 获取 NamespaceHandler 集合，此处处理了集合加载
 		Map<String, Object> handlerMappings = getHandlerMappings();
 		Object handlerOrClassName = handlerMappings.get(namespaceUri);
 		if (handlerOrClassName == null) {
@@ -156,6 +156,8 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 			synchronized (this) {
 				handlerMappings = this.handlerMappings;
 				if (handlerMappings == null) {
+					// this.handlerMappingsLocation 是 META-INF/spring.handlers
+					// 然后把 namespace 和对应的 NamespaceHandler 关系存储至map集合handlerMappings中
 					try {
 						Properties mappings =
 								PropertiesLoaderUtils.loadAllProperties(this.handlerMappingsLocation, this.classLoader);
@@ -163,6 +165,7 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 							logger.debug("Loaded NamespaceHandler mappings: " + mappings);
 						}
 						Map<String, Object> mappingsToUse = new ConcurrentHashMap<>(mappings.size());
+						// 初始化 NamespaceHandler 到 Map 结构
 						CollectionUtils.mergePropertiesIntoMap(mappings, mappingsToUse);
 						handlerMappings = mappingsToUse;
 						this.handlerMappings = handlerMappings;

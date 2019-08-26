@@ -16,18 +16,8 @@
 
 package org.springframework.beans.factory.xml;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.parsing.BeanComponentDefinition;
@@ -38,6 +28,15 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Default implementation of the {@link BeanDefinitionDocumentReader} interface that
@@ -94,7 +93,9 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
 		this.readerContext = readerContext;
 		logger.debug("Loading bean definitions");
+		// 获取 <beans> 标签元素
 		Element root = doc.getDocumentElement();
+		// 解析并注册 BeanDefinition
 		doRegisterBeanDefinitions(root);
 	}
 
@@ -126,12 +127,14 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		// the new (child) delegate with a reference to the parent for fallback purposes,
 		// then ultimately reset this.delegate back to its original (parent) reference.
 		// this behavior emulates a stack of delegates without actually necessitating one.
+		// 采用委托模式，具体的 BeanDefinition 解析由 BeanDefinitionParserDelegate 完成
 		BeanDefinitionParserDelegate parent = this.delegate;
 		this.delegate = createDelegate(getReaderContext(), root, parent);
 
 		if (this.delegate.isDefaultNamespace(root)) {
 			String profileSpec = root.getAttribute(PROFILE_ATTRIBUTE);
 			if (StringUtils.hasText(profileSpec)) {
+				// 解析 xml 文件的 profile 环境配置
 				String[] specifiedProfiles = StringUtils.tokenizeToStringArray(
 						profileSpec, BeanDefinitionParserDelegate.MULTI_VALUE_ATTRIBUTE_DELIMITERS);
 				if (!getReaderContext().getEnvironment().acceptsProfiles(specifiedProfiles)) {
@@ -144,6 +147,10 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			}
 		}
 
+		// 在我们开始处理bean定义之前，首先通过处理任何自定义元素类型，允许XML可扩展。
+		// 此方法是XML的任何其他自定义预处理的自然*扩展点。
+		// 默认实现为空。例如，子类可以重写此方法以将自定义元素转换为标准的Spring bean定义。
+		// 实现者可以通过相应的访问器访问解析器的bean定义读取器和底层XML资源
 		preProcessXml(root);
 		parseBeanDefinitions(root, this.delegate);
 		postProcessXml(root);
@@ -155,6 +162,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			XmlReaderContext readerContext, Element root, @Nullable BeanDefinitionParserDelegate parentDelegate) {
 
 		BeanDefinitionParserDelegate delegate = new BeanDefinitionParserDelegate(readerContext);
+		// 初始化 lazy-init、autowire 等
 		delegate.initDefaults(root, parentDelegate);
 		return delegate;
 	}
@@ -166,15 +174,19 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 */
 	protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
 		if (delegate.isDefaultNamespace(root)) {
+			// 获取根元素下所有子节点（bean、import、alias 和其他自定义标签 context、aop 等）
 			NodeList nl = root.getChildNodes();
 			for (int i = 0; i < nl.getLength(); i++) {
 				Node node = nl.item(i);
 				if (node instanceof Element) {
 					Element ele = (Element) node;
+					// 判断是否符合 Spring xml 命令规则
 					if (delegate.isDefaultNamespace(ele)) {
+						// bean、import、alias 等标签使用默认解析
 						parseDefaultElement(ele, delegate);
 					}
 					else {
+						// context、aop 等标签使用自定义解析
 						delegate.parseCustomElement(ele);
 					}
 				}
