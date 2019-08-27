@@ -505,6 +505,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		// 创建 BeanDefinitionDocumentReader 对象用来解析 Document 对象，完成 BeanDefinition 解析
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
 		// 获取已注册的 BeanDefinition 数量
+		// getRegistry() 获取的是 DefaultListableBeanFactory 实例，因为在最初 XmlBeanFactory 继承的就是该类
 		int countBefore = getRegistry().getBeanDefinitionCount();
 		// 注册 BeanDefinition 具体过程，使用 子类 DefaultBeanDefinitionDocumentReader 实现该过程
 		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
