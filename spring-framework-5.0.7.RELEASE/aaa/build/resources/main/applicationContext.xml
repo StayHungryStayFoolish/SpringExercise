@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/aop
+      http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+<!--    <context:property-placeholder location="classpath:/aop/db.properties"/>-->
+<!--    &lt;!&ndash; 配置 Hikari &ndash;&gt;-->
+<!--    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig" init-method="getDataSource">-->
+<!--        <property name="jdbcUrl" value="${datasource.url}"/>-->
+<!--        <property name="poolName" value="${datasource.poolName}"/>-->
+<!--        <property name="username" value="${datasource.username}"/>-->
+<!--        <property name="password" value="${datasource.password}"/>-->
+<!--        <property name="driverClassName" value="${datasource.driverClassName}"/>-->
+<!--        <property name="maximumPoolSize" value="${datasource.maximumPoolSize}"/>-->
+<!--        <property name="maxLifetime" value="${datasource.max-leftTime}"/>-->
+<!--        <property name="dataSourceProperties">-->
+<!--            <props>-->
+<!--                <prop key="dataSourceClassName">com.mysql.jdbc.jdbc2.optional.MysqlDataSource</prop>-->
+<!--                <prop key="cachePrepStmts">true</prop>-->
+<!--                <prop key="prepStmtCacheSize">250</prop>-->
+<!--                <prop key="prepStmtCacheSqlLimit">2048</prop>-->
+<!--            </props>-->
+<!--        </property>-->
+<!--    </bean>-->
+
+<!--    &lt;!&ndash; 注册 DataSource &ndash;&gt;-->
+<!--    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">-->
+<!--        <constructor-arg ref="hikariConfig"/>-->
+<!--    </bean>-->
+
+<!--    &lt;!&ndash; 配置事务 &ndash;&gt;-->
+<!--    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+<!--        <property name="dataSource" ref="dataSource" />-->
+<!--    </bean>-->
+
+
+<!--    &lt;!&ndash; 配置事务注解驱动 &ndash;&gt;-->
+<!--    &lt;!&ndash; proxy-target-class ，false 为默认值，采用 JDK 代理，true 采用 CGLIB 代理。   &ndash;&gt;-->
+<!--    &lt;!&ndash; 如果采用 CGLIB 代理，@Transactional 若使用在接口上则事务失效。因为 CGLIB 基于类代理被创建，JDK 基于接口代理被创建。 &ndash;&gt;-->
+<!--    &lt;!&ndash; 推荐使用 JDK 接口代理  &ndash;&gt;-->
+<!--    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="false"/>-->
+
+<!--    &lt;!&ndash; 测试事务自调用，Method_A 调用 Method_B 方法，如需事务生效，需要打开此配置 &ndash;&gt;-->
+<!--    &lt;!&ndash; 前提：Method_A 没有事务注解，且 Method_B 有事务注解，需要将 Method_B 注解改为 @Transactional(propagation = Propagation.REQUIRES_NEW) &ndash;&gt;-->
+<!--    &lt;!&ndash; 并且将原调用 methodB() 更改为 ((CurrentClass)AopContext.currentProxy()).methodB() 才可以生效   &ndash;&gt;-->
+<!--    &lt;!&ndash;    <aop:aspectj-autoproxy expose-proxy="true"/>&ndash;&gt;-->
+
+<!--    &lt;!&ndash; 配置SqlSessionFactory &ndash;&gt;-->
+<!--    &lt;!&ndash;resources 内 dao 文件扫描属性配置&ndash;&gt;-->
+<!--    &lt;!&ndash; typeAliasesPackage 配置以后，dao 文件不需要再写全路径 &ndash;&gt;-->
+<!--    &lt;!&ndash; mapperLocations 扫描所有 mappers &ndash;&gt;-->
+<!--    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">-->
+<!--        <property name="dataSource" ref="dataSource"/>-->
+<!--        <property name="typeAliasesPackage" value="io.stayhungrystayfoolish.aop.domain"/>-->
+<!--        <property name="mapperLocations" value="classpath:mapper/*.xml"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">-->
+<!--        <constructor-arg ref="sqlSessionFactory"/>-->
+<!--    </bean>-->
+<!--    &lt;!&ndash; 根据mapper接口生成代理对象 &ndash;&gt;-->
+<!--    <bean id="dao" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
+<!--        <property name="mapperInterface" value="io.stayhungrystayfoolish.aop.dao.UserDao"/>-->
+<!--        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>-->
+<!--    </bean>-->
+
+<!--    <context:component-scan base-package="io.stayhungrystayfoolish.aop" />-->
+</beans>

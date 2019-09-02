@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+}
+
+group 'org.springframework'
+version '5.0.7.RELEASE'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'commons-logging', name: 'commons-logging', version: '1.1.1'
+    compile(project(":spring-aop"))  // for @Async support
+    compile(project(":spring-core"))  // for @Configurable support
+    compile(project(":spring-beans"))  // for @Configurable support
+    compile(project(":spring-context"))  // for @Enable* support
+    compile(project(":spring-context-support"))  // for JavaMail and JSR-107 support
+//    compile(project(":spring-orm"))  // for JPA exception translation support
+    compile(project(":spring-tx"))  // for JPA, @Transactional support
+    compile("javax.cache:cache-api:1.1.0") // for JCache aspect
+    compile("javax.transaction:javax.transaction-api:1.2")  // for @javax.transaction.Transactional support
+    compile(project(":spring-jdbc"))  // for CodeStyleAspect
+    compile(project(":spring-jcl"))  // for CodeStyleAspect
+    compile(project(":spring-test"))
+    compile("javax.mail:javax.mail-api:1.6.1")
+}
