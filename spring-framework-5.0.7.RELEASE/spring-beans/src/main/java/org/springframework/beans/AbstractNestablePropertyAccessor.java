@@ -272,9 +272,11 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 
 	protected void setPropertyValue(PropertyTokenHolder tokens, PropertyValue pv) throws BeansException {
 		if (tokens.keys != null) {
+			// 处理有键类型的 List、Map、Array 三种类型
 			processKeyedProperty(tokens, pv);
 		}
 		else {
+			// 处理 Field、Bean 类型，Field 类型最终由 DirectFieldAccessor 处理，Bean 类型由 BeanWrapperImpl 处理
 			processLocalProperty(tokens, pv);
 		}
 	}
