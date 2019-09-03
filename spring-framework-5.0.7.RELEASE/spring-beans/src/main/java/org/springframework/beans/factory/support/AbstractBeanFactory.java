@@ -201,6 +201,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// Eagerly check singleton cache for manually registered singletons.
 		// 调用父类 DefaultSingletonFactoryRegistry 的 getSingleton() 方法，从缓存中读取
 		// 该方法通过三级缓存解决了循环依赖问题。
+		// 注意：sharedInstance 并不一定是自定义获取的 Bean，有可能是 FactoryBean
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
 			if (logger.isDebugEnabled()) {
@@ -215,6 +216,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					logger.debug("Returning cached instance of singleton bean '" + beanName + "'");
 				}
 			}
+			// 如果取出来的 Bean 实例是 FactoryBean，则需要使用 FactoryBean 生成一个 Bean 实例。
 			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		}
 

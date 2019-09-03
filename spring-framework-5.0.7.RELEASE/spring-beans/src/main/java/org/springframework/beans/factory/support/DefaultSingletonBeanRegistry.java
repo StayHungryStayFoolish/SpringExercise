@@ -67,13 +67,13 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 	/** Cache of singleton factories: bean name --> ObjectFactory */
 	/**
-	 * 三级缓存
+	 * 二级缓存
 	 */
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
 	/** Cache of early singleton objects: bean name --> bean instance */
 	/**
-	 * 二级缓存
+	 * 三级缓存
 	 */
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
@@ -178,18 +178,18 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			// 同步一级缓存
 			synchronized (this.singletonObjects) {
-				// 从二级缓存中获取对象
+				// 从三级缓存中获取对象
 				singletonObject = this.earlySingletonObjects.get(beanName);
 				// allowEarlyReference 是否允许从 singletonFactories 中通过 getObject 拿到对象
 				if (singletonObject == null && allowEarlyReference) {
 					// 从三级缓存中获取对象
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
-					// 如果对象存在，从三级缓存中移出，放置到二级缓存中
+					// 如果对象存在，从三级缓存中移出，放置到三级缓存中
 					if (singletonFactory != null) {
 						singletonObject = singletonFactory.getObject();
 						// 从 singletonFactories 中移除，并放入 earlySingletonObjects 中。
 						this.earlySingletonObjects.put(beanName, singletonObject);
-						// 其实也就是从三级缓存移动到了二级缓存
+						// 其实也就是从二级缓存移动到了三级缓存
 						this.singletonFactories.remove(beanName);
 					}
 				}
