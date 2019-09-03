@@ -483,46 +483,64 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		return this.applicationListeners;
 	}
 
+	/**
+	 * 具体参考
+	 * @see AbstractRefreshableApplicationContext#refreshBeanFactory
+	 */
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
+			// 1. 刷新预处理
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			// 2.1 创建 IOC 容器，DefaultListableBeanFactory
+			// 2.2 加载解析 XML 文件（存储到 Document 中）
+			// 2.3 读取 Document，并完成 BeanDefinition 加载与注册
+			// 具体看 AbstractRefreshableApplicationContext.refreshBeanFactory(); 方法
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
+			// 3. 对 IOC 容器预处理（设置公共属性）
 			prepareBeanFactory(beanFactory);
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				// 4. 上下文处理（设置 request/session scopes)
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
+				// 5. 调用 BeanFactoryPostProcessor 后置处理器处理 BeanDefinition （针对 PriorityOrdered、Order其他等处理）
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
-				// 注册 BeanPostProcessor，根据优先级将 PriorityOrdered、Ordered、其他进行实例化、排序、注册
+				// 6. 注册 BeanPostProcessor，根据优先级将 PriorityOrdered、Ordered、其他进行实例化、排序、注册
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
+				// 7. 初始化消息源（例如：国家化 i18n 等）
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				// 8. 初始化应用事件广播器
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				// 9. 钩子方法，初始化一些框架的 Bean
 				onRefresh();
 
 				// Check for listener beans and register them.
+				// 10. 注册监听器
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
-				// 注册剩下的 Singleton Bean
+				// 11. 注册剩下的 Singleton Bean（非懒加载方式）
+				// 注意事项：(non-lazy-init) Bean 的 IOC、DI、AOP 都是发生在此步骤，关键方法 preInstantiateSingletons()
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+				// 12. 完成刷新时，需要发布对应的事件
 				finishRefresh();
 			}
 
@@ -555,8 +573,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * active flag as well as performing any initialization of property sources.
 	 */
 	protected void prepareRefresh() {
+		// 记录开始日期
 		this.startupDate = System.currentTimeMillis();
 		this.closed.set(false);
+		// 设置活动状态
 		this.active.set(true);
 
 		if (logger.isInfoEnabled()) {
@@ -564,6 +584,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment
+		// 初始化执行资源
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable
@@ -587,10 +608,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	/**
 	 * Tell the subclass to refresh the internal bean factory.
 	 * @return the fresh BeanFactory instance
-	 * @see #refreshBeanFactory()
+	 * @see #refreshBeanFactory() {@link AbstractRefreshableApplicationContext#refreshBeanFactory()}
 	 * @see #getBeanFactory()
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+		// 因为最初的 ClassPathXmlApplicationContext 的父类是 AbstractRefreshableApplicationContext
+		// 所以具体实现由 AbstractRefreshableApplicationContext.refreshBeanFactory()
 		refreshBeanFactory();
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 		if (logger.isDebugEnabled()) {
@@ -839,6 +862,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.freezeConfiguration();
 
 		// Instantiate all remaining (non-lazy-init) singletons.
+		// 实例化非懒加载 Bean
 		beanFactory.preInstantiateSingletons();
 	}
 

@@ -4,18 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>io.stayhungrystayfoolish</artifactId>
-        <groupId>SpringIOCExercise</groupId>
+        <groupId>SpringIoCExercise</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>CustomIOCExercise</artifactId>
+    <artifactId>CustomIoCExercise</artifactId>
 
 
     <dependencies>
         <dependency>
-            <groupId>SpringIOCExercise</groupId>
-            <artifactId>CustomIOC</artifactId>
+            <groupId>SpringIoCExercise</groupId>
+            <artifactId>CustomIoC</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

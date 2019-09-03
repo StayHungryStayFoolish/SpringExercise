@@ -139,8 +139,12 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 			throws BeansException {
 
 		super(parent);
+		// 目的为了创建 Resource 资源对象
 		setConfigLocations(configLocations);
 		if (refresh) {
+			// 加载、解析 BeanDefinition
+			// 创建 DefaultListableBeanFactory
+			// 调用高级父类 AbstractApplicationContext#refresh() 方法
 			refresh();
 		}
 	}

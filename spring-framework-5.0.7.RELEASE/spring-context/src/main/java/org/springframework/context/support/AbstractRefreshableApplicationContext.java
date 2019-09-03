@@ -119,17 +119,33 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * This implementation performs an actual refresh of this context's underlying
 	 * bean factory, shutting down the previous bean factory (if any) and
 	 * initializing a fresh bean factory for the next phase of the context's lifecycle.
+	 * @see org.springframework.beans.factory.support.AbstractBeanDefinitionReader#loadBeanDefinitions
+	 * @see org.springframework.beans.factory.xml.XmlBeanDefinitionReader#loadBeanDefinitions
 	 */
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
+		// 销毁以前工厂
 		if (hasBeanFactory()) {
 			destroyBeans();
 			closeBeanFactory();
 		}
 		try {
+			// 创建工厂，并初始化
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
+			// 根据上线下文设置：是否允许覆盖 BeanDefinition、是否允许循环依赖
 			customizeBeanFactory(beanFactory);
+			// AbstractRefreshableApplicationContext 子类：
+			// 1. AbstractXmlApplicationContext
+			// 2. AnnotationConfigWebApplicationContext
+			// 3. GroovyWebApplicationContext
+			// 4. XmlWebApplicationContext
+			// 1、3、4 最终调用的 AbstractBeanDefinitionReader#loadBeanDefinitions() 加载 BeanDefinition
+			// 1和4 调用 XmlBeanDefinitionReader#loadBeanDefinitions() 加载，在 doLoadBeanDefinitions() 加载，最终在 DefaultBeanDefinitionDocumentReader#doRegisterBeanDefinitions() 完成 XML 文件解析
+			// 2 调用 AnnotatedBeanDefinitionReader#doRegisterBean() 加载 BeanDefinition，并最终在 DefaultListableBeanFactory#registerBeanDefinition 完成解析与注册
+
+			// 实现加载、解析 BeanDefinitions
+			// 加载 BeanDefinition，并最终解析
 			loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
 				this.beanFactory = beanFactory;
