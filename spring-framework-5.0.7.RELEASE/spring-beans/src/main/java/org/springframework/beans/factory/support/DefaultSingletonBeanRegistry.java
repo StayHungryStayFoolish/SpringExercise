@@ -78,7 +78,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 	/** Cache of early singleton objects: bean name --> bean instance */
 	/**
-	 * 二级缓存：提前曝光的单例对象的 Cache
+	 * 二级缓存：提前曝光的单例对象（通过三级缓存 ObjectFactory<?> 获取的 Bean 实例）的 Cache
 	 * value: 只实例化未初始化的实例（只存储 beanName 和 bean 实例映射关系）
 	 */
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
@@ -248,6 +248,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				}
 				try {
 					singletonObject = singletonFactory.getObject();
+					// 如果是新的 Bean 实例，则在286行进行操作
 					newSingleton = true;
 				}
 				catch (IllegalStateException ex) {
@@ -281,6 +282,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				// this.earlySingletonObjects.remove(beanName); 移除缓存
 				// this.registeredSingletons.add(beanName);  在已注册缓存，缓存下来
 				if (newSingleton) {
+					// 存入一级缓存，删除二、三级缓存
 					addSingleton(beanName, singletonObject);
 				}
 			}
