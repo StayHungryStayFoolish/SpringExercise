@@ -62,18 +62,24 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	/** Cache of singleton objects: bean name --> bean instance */
 	/**
 	 * 一级缓存：单例对象的 Cache
+	 * value: 完全初始化的完整对象
 	 */
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
 	/** Cache of singleton factories: bean name --> ObjectFactory */
 	/**
-	 * 三级缓存：单例对象工厂的 Cache
+	 * 三级缓存：单例对象工厂（ ObjectFactory <?> ）的 Cache
+	 * value: 将只完成实例化未初始化的实例提前暴露（不只放入缓存，还需要使用 BeanPostProcessor 进行后置处理）
+	 * 该缓存在循环依赖中起决定作用：
+	 * 例如：A - B - C (C - A) 依赖循环，A 创建 B，B 又创建 C ，C 又依赖 A 的时候，此时 A 会有判断是否正在创建中，
+	 * 此时 A 属于创建中状态，C 则在三级缓存中提前暴露，从而完成 A 实例的初始化。
 	 */
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
 	/** Cache of early singleton objects: bean name --> bean instance */
 	/**
 	 * 二级缓存：提前曝光的单例对象的 Cache
+	 * value: 只实例化未初始化的实例（只存储 beanName 和 bean 实例映射关系）
 	 */
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
@@ -194,11 +200,11 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				singletonObject = this.earlySingletonObjects.get(beanName);
 				// allowEarlyReference 是否允许从 singletonFactories 中通过 getObject 拿到对象
 				if (singletonObject == null && allowEarlyReference) {
-					// 从三级缓存中获取单例 Bean
+					// 从三级缓存中获取 ObjectFactory 工厂对象
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
-					// 如果对象存在，从三级缓存中移除，移到二级缓存中
+					// 如果工程对象存在，从三级缓存中移除，移到二级缓存中
 					if (singletonFactory != null) {
-						// 从单例工厂获取单例 Bean
+						// 从工厂获取单例 Bean
 						singletonObject = singletonFactory.getObject();
 						// 存入二级缓存
 						this.earlySingletonObjects.put(beanName, singletonObject);

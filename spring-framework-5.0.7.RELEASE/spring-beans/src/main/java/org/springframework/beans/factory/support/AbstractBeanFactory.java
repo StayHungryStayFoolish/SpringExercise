@@ -279,11 +279,13 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				}
 
 				// Create bean instance.
-				// 创建 Bean 实例
+				// 创建 Bean 单例实例（只有单例会存入缓存）
 				if (mbd.isSingleton()) {
 					sharedInstance = getSingleton(beanName, () -> {
 						try {
 							// AbstractAutowireCapableBeanFactory 实现
+							// 重要：创建 Bean 实例、属性填充、初始化 -------------------------------------------------------
+							// AbstractAutowireCapableBeanFactory.createBean()
 							return createBean(beanName, mbd, args);
 						}
 						catch (BeansException ex) {
@@ -296,7 +298,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					});
 					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
 				}
-
+				// 创建原型实例
 				else if (mbd.isPrototype()) {
 					// It's a prototype -> create a new instance.
 					Object prototypeInstance = null;
@@ -311,6 +313,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);
 				}
 
+				// 创建 session、request 实例
 				else {
 					String scopeName = mbd.getScope();
 					final Scope scope = this.scopes.get(scopeName);
