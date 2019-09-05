@@ -624,6 +624,7 @@ public class BeanDefinitionParserDelegate {
 				Element metaElement = (Element) node;
 				String key = metaElement.getAttribute(KEY_ATTRIBUTE);
 				String value = metaElement.getAttribute(VALUE_ATTRIBUTE);
+				// 持有键值样式的基础类，除了键值对之外，还跟踪定义源。，它是 BeanDefinition 的一部分
 				BeanMetadataAttribute attribute = new BeanMetadataAttribute(key, value);
 				attribute.setSource(extractSource(metaElement));
 				attributeAccessor.addMetadataAttribute(attribute);
@@ -814,10 +815,16 @@ public class BeanDefinitionParserDelegate {
 				error("Multiple 'property' definitions for property '" + propertyName + "'", ele);
 				return;
 			}
+			// 主要解析 ref、value 等类型。
+			// ref 引用标签封装为 RuntimeBeanReference 返回
+			// value 标签封装为 TypedStringValue 返回
 			Object val = parsePropertyValue(ele, bd, propertyName);
+			// val 可能是引用类型，也可能为普通 value 类型
 			PropertyValue pv = new PropertyValue(propertyName, val);
+			// 解析 <property> 标签的 k，v 值，并将该标签内子元素对应的数据存储 BeanMetadataAttribute(BeanDefinition 的基础类)
 			parseMetaElements(ele, pv);
 			pv.setSource(extractSource(ele));
+			// 将解析完的 PropertyValue 存储到 BeanDefinition
 			bd.getPropertyValues().addPropertyValue(pv);
 		}
 		finally {

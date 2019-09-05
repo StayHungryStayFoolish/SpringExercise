@@ -2,8 +2,12 @@ import io.stayhungrystayfoolish.aop.domain.User;
 import io.stayhungrystayfoolish.aop.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -25,6 +29,7 @@ public class MyBatisXMLTest {
     @Before
     public void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("aop/applicationContext.xml");
+        DefaultListableBeanFactory context1 = new XmlBeanFactory(new ClassPathResource("aop/applicationContext.xml"));
         userService = (UserService) context.getBean("userServiceImpl");
     }
 

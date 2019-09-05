@@ -133,7 +133,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			// 创建工厂，并初始化
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
-			// 根据上线下文设置：是否允许覆盖 BeanDefinition、是否允许循环依赖
+			// 根据上线下文设置：是否允许覆盖 BeanDefinition、是否允许循环依赖属性
 			customizeBeanFactory(beanFactory);
 			// AbstractRefreshableApplicationContext 子类：
 			// 1. AbstractXmlApplicationContext

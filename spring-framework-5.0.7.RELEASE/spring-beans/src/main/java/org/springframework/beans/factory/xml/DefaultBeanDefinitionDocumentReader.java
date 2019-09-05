@@ -148,7 +148,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		}
 
 		// 在我们开始处理bean定义之前，首先通过处理任何自定义元素类型，允许XML可扩展。
-		// 此方法是XML的任何其他自定义预处理的自然*扩展点。
+		// 此方法是XML的任何其他自定义预处理的自然扩展点。
 		// 默认实现为空。例如，子类可以重写此方法以将自定义元素转换为标准的Spring bean定义。
 		// 实现者可以通过相应的访问器访问解析器的bean定义读取器和底层XML资源
 		preProcessXml(root);
@@ -182,7 +182,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 					Element ele = (Element) node;
 					// 判断是否符合 Spring xml 命令规则
 					if (delegate.isDefaultNamespace(ele)) {
-						// bean、import、alias 等标签使用默认解析
+						// bean、import、alias 等标签使用默认解析 ---------------------------------------------------------
 						parseDefaultElement(ele, delegate);
 					}
 					else {
@@ -197,6 +197,9 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		}
 	}
 
+	/**
+	 * bean、import、alias 等标签使用默认解析
+	 */
 	private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
 		if (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) {
 			importBeanDefinitionResource(ele);
@@ -205,6 +208,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			processAliasRegistration(ele);
 		}
 		else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) {
+			// 处理 <bean> 标签
 			processBeanDefinition(ele, delegate);
 		}
 		else if (delegate.nodeNameEquals(ele, NESTED_BEANS_ELEMENT)) {
@@ -314,7 +318,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * and registering it with the registry.
 	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
-		// 解析 <beans> 并封装 BeanDefinition 到 BeanDefinitionHolder 对象中
+		// 解析 <bean> 并封装 BeanDefinition 到 BeanDefinitionHolder 对象中
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
 			// 装潢模式
