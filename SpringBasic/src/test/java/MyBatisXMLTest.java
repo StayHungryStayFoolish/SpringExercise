@@ -30,6 +30,7 @@ public class MyBatisXMLTest {
     public void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("aop/applicationContext.xml");
         DefaultListableBeanFactory context1 = new XmlBeanFactory(new ClassPathResource("aop/applicationContext.xml"));
+
         userService = (UserService) context.getBean("userServiceImpl");
     }
 
