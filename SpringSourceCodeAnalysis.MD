@@ -1,6 +1,8 @@
 # Spring Source Code Analysis
 
-## 
+## Spring BeanFactory 
+
+![avatar](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/BeanFactory.png?raw=true)
 
 ## Spring IoC 容器加载过程
 
