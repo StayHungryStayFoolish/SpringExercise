@@ -326,8 +326,7 @@
             }
         }
     ```  
-       
-       
+
 **若类上加 @Transactional，则 Method_A 调用 Method_B 事务生效。**
  
 **详细可参考 https://zhuanlan.zhihu.com/p/35483036** 
