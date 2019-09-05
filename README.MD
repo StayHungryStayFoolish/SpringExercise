@@ -8,9 +8,9 @@
 - **SpringBasic** 采用 XML 方式配置 MyBatis、AOP  
 - **SpringMybatisAnnotation** 采用注解方式配置 MyBatis  
 
-### Spring IoC 容器加载过程
+## Spring IoC 容器加载过程
 
-#### Spring IoC 入口
+### Spring IoC 入口
 
 - 基于 BeanFactory 加载 Bean 的入口
 
@@ -26,7 +26,7 @@
 
   
 
-- 本文主要以 ApplicationContext 为主，分析基本流程
+#### 本文主要以 ApplicationContext 为主，分析 Spring IoC 容器加载过程
 
 
 
