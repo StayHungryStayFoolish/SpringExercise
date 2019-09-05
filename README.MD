@@ -289,15 +289,44 @@
   2. 异常在该方法被 try...catch，如果需要 try...catch，则在 catch 内使用 throw 也可以使事务重新生效。
 
   3. 同一类中 Method_A 调用 Method_B 不会使事务生效。
+  
      前提：类上没有 @Transactional 注解，且 Method_A 对外方法没有 @Transactional 注解，只在 Method_B 方法上加该注解。
-     则 Method_A 对外方法事务不生效，因为 @Transactional 注解只能用在对外方法上。
+     则 Method_A 对外方法事务不生效，因为 @Transactional 注解只能用在对外方法上，Method_B 的注解并不会传播该事务。
    
-       测试事务自调用，Method_A 调用 Method_B 方法，如需事务生效，需要打开此配置
+       测试事务自调用，Method_A 调用 Method_B 方法，如需事务生效，需要打开此配置 
        
-       前提：Method_A 没有事务注解，且 Method_B 有事务注解，
-       需要将 Method_B 注解改为 @Transactional(propagation = Propagation.REQUIRES_NEW)
-       并且将原调用 methodB() 更改为 ((CurrentClass)AopContext.currentProxy()).methodB() 才可以生效  
-       <aop:aspectj-autoproxy expose-proxy="true"/>
+       **<aop:aspectj-autoproxy expose-proxy="true"/>** 对应注解为 **@EnableAspectJAutoProxy(exposeProxy=true)**
+       
+      暴露出来代理对象。最终使用 **((CurrentClass)AopContext.currentProxy()).methodB()** 使之生效。 
+       
+       前提：Method_A 没有事务注解，且 Method_B 有事务注解，需要将 Method_B 注解改为 
+       
+       @Transactional(propagation = Propagation.REQUIRES_NEW)
+       
+       并且将原调用 methodB() 更改为 
+       
+       **((CurrentClass)AopContext.currentProxy()).methodB()** 才可以生效 
+       
+       **代码示例：**
+       
+      ```java
+        public interface UserService{
+            public void a();
+            public void a();
+        }
+        
+        public class UserServiceImpl implements UserService{
+            @Transactional(propagation = Propagation.REQUIRED)
+            public void a(){
+                this.b();
+            }
+            @Transactional(propagation = Propagation.REQUIRED_NEW)
+            public void b(){
+                System.out.println("b has been called");
+            }
+        }
+    ```  
+       
        
    **若类上加 @Transactional，则 Method_A 调用 Method_B 事务生效。**
    
