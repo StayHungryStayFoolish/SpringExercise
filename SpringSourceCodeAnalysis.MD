@@ -121,14 +121,11 @@
 
 ### 以类 + 方法扼要说明
 
-```html
-new ClassPathXmlApplicationContext # <strong>构造方法</strong>
-		AbstractApplicationContext # <strong>refresh</strong> 刷新 Spring IoC 容器（删除原容器，创建新容器）
-				obtainFreshBeanFactory 创建工厂并初始化，<strong>以下为 BeanFactory 具体流程</strong>
-						AbstractRefreshableApplicationContext # <strong>refreshBeanFactory</strong> 创建 										  		
-						        DefaultListableBeanFactory
-```
-
+1. new ClassPathXmlApplicationContext # <strong>构造方法</strong>
+		2. AbstractApplicationContext # <strong>refresh</strong> 刷新 Spring IoC 容器（删除原容器，创建新容器）
+				3. obtainFreshBeanFactory 创建工厂并初始化，<strong>以下为 BeanFactory 具体流程</strong>
+						4. AbstractRefreshableApplicationContext # <strong>refreshBeanFactory</strong> 创建 										  		
+						        5. DefaultListableBeanFactory
   
 
 ### 以下代码分析以 ApplicationContext 为主，分析 Spring IoC 容器加载过程
