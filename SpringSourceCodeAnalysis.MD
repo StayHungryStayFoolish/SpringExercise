@@ -1,6 +1,6 @@
 <dl>
-  <dt>Definition list</dt>
-  <dd>Is something people use sometimes.</dd>
+  <dt><font color="red">Definition list</font>></dt>
+  <dd><style="color:red">Is something people use sometimes.</style></dd>
 
   <dt>Markdown in HTML</dt>
   <dd>Does *not* work **very** well. Use HTML <em>tags</em>.</dd>
