@@ -123,8 +123,8 @@
 
 ### 类 + 方法扼要说明
 
-1.```diff 
-- new ClassPathXmlApplicationContext in red # <strong>构造方法</strong>
+```diff 
+- 1. new ClassPathXmlApplicationContext in red # <strong>构造方法</strong>
 
 2.<span style="color:red;">AbstractApplicationContext</span> # <strong>refresh</strong> 刷新 Spring IoC 容器（删除原容器，创建新容器）
    
