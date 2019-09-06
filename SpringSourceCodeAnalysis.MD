@@ -1,6 +1,6 @@
 # Spring Source Code Analysis
 
-## Spring BeanFactory 
+## BeanFactory 继承体系 
 
 ![avatar](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/BeanFactory.png?raw=true)
 
@@ -32,7 +32,10 @@
     - 继承了几个比较重要的接口，如：
       - MessageSource	提供了国际化 i18n 
       - ApplicationEvenetPublisher	拥有容器上下文关系，启动、关闭时间等等。
-      - ResourcePatternResovler	加载资源     
+      - ResourcePatternResovler	加载资源   
+- 核心接口
+    - DefaultListableBeanFactory
+        - 实现了所有父级工厂的方法，BeanFactory 的集大成者        
 
 
 

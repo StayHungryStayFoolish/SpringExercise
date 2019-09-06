@@ -36,6 +36,7 @@ package org.springframework.beans.factory;
 public interface InitializingBean {
 
 	/**
+	 * 例如：当 BeanFactory 实现该接口后，设置完所有的 Bean 属性之后才会调用该方法
 	 * Invoked by a BeanFactory after it has set all bean properties supplied
 	 * (and satisfied BeanFactoryAware and ApplicationContextAware).
 	 * <p>This method allows the bean instance to perform initialization only
