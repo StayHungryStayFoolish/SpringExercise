@@ -4,6 +4,36 @@
 
 ![avatar](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/BeanFactory.png?raw=true)
 
+**层级关系简单说明**
+
+- 一级接口
+  - BeanFactory	定义最基本功能，例如：getBean()
+- 二级接口
+  - AutowireCapableBeanFactory**【侧重装配】**
+    - 装配工厂，定义了一系列装配策略及方法
+      - 5个常量定义了装备策略。例如：按名字、按类型、按构造方法装配
+      - 8个跟自动装备相关的方法。例如：根据分别根据5个不同装配策略
+      - 2个 BeanPostProcessor 相关的前置、后置处理方法。
+      - 2个分解指定依赖的范发过。
+  - HierarchicalBeanFactory**【侧重分级】**
+    - 层级工厂，定义了两个功能：1.返回 Bean 的父工厂 2.判断本地工厂是否包含该 Bean
+  - ListableBeanFactory**【侧重展示】**
+    - 列出工厂的 Bean 相关数据。
+      - 3个和 BeanDefinition 相关的方法。
+      - 2个 getBeanNamesForType() 重载方法。根据指定类型（包括子类）获取子对应的所有 BeanName。
+      - 2个 getBeanOfType() 重载方法。根据类型（包括子类）获取指定 BeanName 的 Bean 的 Map 集合。
+      - 2个注解相关的方法。根据注解类型获取 BeanName 和 Bean 的 Map 集合，根据 BeanName 和类型获取指定的 Bean。
+- 三级接口
+  - ConfigurableBeanFactory**【侧重配置属性：如单例、原型】**
+    - 继承二级接口 **HierarchicalBeanFactory**
+    - 相关方法：类加载器（ClassLoader）、缓存元数据（cacheMetadata）、Bean 表达式分解器、相关属性注册及设置、Scope 相关操作、别名（Alias）、合并 BeanDefinition、销毁 Bean 等等众多操作。
+  - ApplicationContext**【BeanFactory 的增强版，侧重上下文相关】**
+    - 不同于 BeanFactory 很多功能必须以编程方式实现，更偏向于配置方式，提供了较为完整的框架功能。
+    - 继承了几个比较重要的接口，如：
+      - MessageSource	提供了国际化 i18n 
+      - ApplicationEvenetPublisher	拥有容器上下文关系，启动、关闭时间等等。
+      - ResourcePatternResovler	加载资源     
+
 ## Spring IoC 容器加载过程
 
 ### Spring IoC 入口
