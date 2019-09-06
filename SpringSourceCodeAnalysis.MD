@@ -56,6 +56,12 @@
 - GenericBeanDefinition
   - 一站式标准的 BeanDefinition。除了具有指定类可选的构造参数值、属性参数或其它 BeanDefinition 一样的特性外，还具有parenetName属性，这也意味着可以用来灵活设置。
 
+- BeanDefinition 继承的接口
+    - AttributeAccessor
+        - 对任意对象元数据操作
+    - BeanMetadataElement
+        -  获取可配置的源对象
+    
 ------
 
 ## BeanDefinition 相关类说明
