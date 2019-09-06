@@ -270,7 +270,7 @@
    	}
    ```
 
-6. **AbstractXmlApplicationContext** 核心方法 **loadBeanDefinitions()**  主要创建 XmlBeanDefinitionReader (XML 阅读器)，并定位资源，再次内部调用 **loadBeanDefinitions()** 进行读取 xml 并加载 BeanDefini
+6. **AbstractXmlApplicationContext** 核心方法 **loadBeanDefinitions()**  主要创建 XmlBeanDefinitionReader (XML 阅读器)，并定位资源，再次内部调用 **loadBeanDefinitions()** 进行读取 xml 并加载 BeanDefinition
 
    ```java
      @Override
