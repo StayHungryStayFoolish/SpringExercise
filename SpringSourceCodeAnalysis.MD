@@ -124,7 +124,7 @@
 ### 类 + 方法扼要说明
 
 ```diff
-- this will be highlighted in red
+- new ClassPathXmlApplicationContext in red
 
 
 1.```diff + new ClassPathXmlApplicationContext this will be highlighted in red```  new ClassPathXmlApplicationContext # <strong>构造方法</strong>
