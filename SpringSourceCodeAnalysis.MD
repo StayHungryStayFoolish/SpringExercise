@@ -125,13 +125,13 @@
 
 ![avatar](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/BeanFactory-1.jpg?raw=true)
 
-1. new ClassPathXmlApplicationContext # <strong>构造方法</strong>
+1. new ClassPathXmlApplicationContext # **构造方法**
 
-2. AbstractApplicationContext # <strong>refresh</strong> 刷新 Spring IoC 容器（删除原容器，创建新容器）
+2. AbstractApplicationContext # **refresh** 刷新 Spring IoC 容器（删除原容器，创建新容器）
    
-3. **obtainFreshBeanFactory** 创建工厂并初始化，<strong>以下为 BeanFactory 具体流程</strong>
+3. **obtainFreshBeanFactory** 创建工厂并初始化，**以下为 BeanFactory 具体流程**
          
-4. AbstractRefreshableApplicationContext # <strong>refreshBeanFactory</strong> 创建DefaultListableBeanFactory
+4. AbstractRefreshableApplicationContext # **refreshBeanFactory** 创建DefaultListableBeanFactory
    
 5. AbstractXmlApplicationContext # **loadBeanDefinitions** 创建 XmlBeanDefinitionReader
    
