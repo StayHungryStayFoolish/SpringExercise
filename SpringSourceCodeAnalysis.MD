@@ -123,6 +123,8 @@
 
 ### 类 + 方法扼要说明
 
+![avatar](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/BeanFactory-1.png?raw=true)
+
 1. new ClassPathXmlApplicationContext # <strong>构造方法</strong>
 
 2. <span style="color:red;">AbstractApplicationContext</span> # <strong>refresh</strong> 刷新 Spring IoC 容器（删除原容器，创建新容器）
