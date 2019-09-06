@@ -37,7 +37,65 @@
     - DefaultListableBeanFactory
         - 实现了所有父级工厂的方法，BeanFactory 的集大成者        
 
+---
 
+## BeanDefinition 继承体系
+
+![avatar](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/BeanDefinition.png?raw=true)
+
+- BeanDefinition **【描述 Bean 实例】**
+  - 2个标注 Bean Scope 的常量（singleton、prototype）。
+  - 3个标注 Bean 创建由哪种角色创建。
+  - BeanClassName、Scope、LazyInit、依赖的 Bean、MutablePropertyValues、父级工厂名字和方法、构造参数的 value 等相关操作。
+  - **主要作用**
+    - **可以理解为以 XML 方式定义的 Bean 在 IoC 容器内的表现形式**
+    - 允许 **BeanFactoryPostProcessor** 在已经**初始化**，但**尚未实例化**的 Bean 覆盖或添加属性。比如实现类 **PropertyResourceConfigurer** 能够检索并修改属性值和别的 Bean 的元数据。
+
+- RootBeanDefinintion
+  - 可以被 Merge 的 BeanDefinition。配置阶段进行在 BeanFactory 通常使用的类。在 Spring 4 以后，更好的选择是 GenericBeanDefinition。
+- GenericBeanDefinition
+  - 一站式标准的 BeanDefinition。除了具有指定类可选的构造参数值、属性参数或其它 BeanDefinition 一样的特性外，还具有parenetName属性，这也意味着可以用来灵活设置。
+
+------
+
+## BeanDefinition 相关类说明
+
+- **属性相关**
+  - **BeanWrapper** 及子类 **BeanWrapperImpl**（继承了 AbastactNestablePropertyAccwessor 所以有处理属性能力）    
+    - **操作 Bean 属性**
+  - **PropertyValue**     
+    - 持有 Bean 的 **属性名称** 和 **属性值**的对象，对应 <property> 标签
+  - **TypedStringValue**    
+    - 持有 **value** 标签的对象
+      - 对应 <property name="subject" value="Spring" /> 标签中的 value 标签
+  - **RuntimeBeanReference**    
+    - 持有 **ref** 标签的对象
+      - 对应  <property name="subject" ref="Spring" /> 标签中的 ref 标签
+- **解析相关**
+  - **AbstractBeanDefinitionReader** 及子类 **XmlBeanDefinitionReader**、**PropertiesBeanDefinitionReader**
+    - 解析 Xml 或 Properties 文件
+  - **BeanDefinitionDocumentReader** 及子类 **DefaultBeanDefinitionDocumentReader**
+    - 解析 Xml 文件封装的 Document 对象
+- 委托先关
+  - **BeanDefinitionParserDelegate**
+    - 负责 BeanDefinition 的具体工作
+
+------
+
+## Spring 钩子
+
+- InitializingBean    允许 Bean 在**初始化中**后，可以自定义修改 Bean 属性	
+- BeanFactoryPostProcessor    允许 Bean 在**初始化前**修改 Bean 属性。
+- BeanPostProcessor    允许 Bean 只能在**初始化后**修改 Bean 属性。
+- InstantiationAwareBeanPostProcessor    允许 Bean 在**实例化后**修改 Bean 属性。
+
+参考文章：
+
+[Spring 钩子方法和接口使用详解](http://www.sohu.com/a/166804449_714863)
+
+[Spring 钩子 BeanFactoryPostProcessor 和 BeanPostProcessor 源码学习](https://www.jianshu.com/p/a90a3e617ba6)
+
+---
 
 ## Spring IoC 容器加载过程
 
