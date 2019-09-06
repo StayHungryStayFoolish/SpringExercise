@@ -121,7 +121,7 @@
 
 ### 以类 + 方法扼要说明
 
-   ```html
+```html
 new ClassPathXmlApplicationContext # <strong>构造方法</strong>
 		AbstractApplicationContext # <strong>refresh</strong> 刷新 Spring IoC 容器（删除原容器，创建新容器）
 				obtainFreshBeanFactory 创建工厂并初始化，<strong>以下为 BeanFactory 具体流程</strong>
