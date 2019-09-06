@@ -125,6 +125,8 @@
 
 ![avatar](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/BeanFactory-1.jpg?raw=true)
 
+<span style="color: green"> Some green text </span>
+
 1. new ClassPathXmlApplicationContext # **构造方法**
 
 2. AbstractApplicationContext # **refresh** 刷新 Spring IoC 容器（删除原容器，创建新容器）
@@ -159,7 +161,7 @@
 
 16.1 **createBeanDefinition** 最终调用 BeanDefinitionReaderUtils.createBeanDefinition() 通过反射创建 AbstractBeanDefinition 对象
 
-16.2  16.1 完成后调用**parserPropertyElements** 遍历 <property> 将解析的 PropertyValue 存入 BeanDefinition 
+16.2 在 16.1 完成后调用**parserPropertyElements** 遍历 <property> 将解析的 PropertyValue 存入 BeanDefinition 
 
 
 
