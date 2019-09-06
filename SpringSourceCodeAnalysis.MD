@@ -123,38 +123,37 @@
 
 ### 类 + 方法扼要说明
 
-```diff 
-1. - new ClassPathXmlApplicationContext in red # <strong>构造方法</strong>
+1. new ClassPathXmlApplicationContext # <strong>构造方法</strong>
 
-2.<span style="color:red;">AbstractApplicationContext</span> # <strong>refresh</strong> 刷新 Spring IoC 容器（删除原容器，创建新容器）
+2. <span style="color:red;">AbstractApplicationContext</span> # <strong>refresh</strong> 刷新 Spring IoC 容器（删除原容器，创建新容器）
    
-3.<b>obtainFreshBeanFactory</b> 创建工厂并初始化，<strong>以下为 BeanFactory 具体流程</strong>
+3. <b>obtainFreshBeanFactory</b> 创建工厂并初始化，<strong>以下为 BeanFactory 具体流程</strong>
          
-4.<span style="color:red;">AbstractRefreshableApplicationContext</span> # <strong>refreshBeanFactory</strong> 创建DefaultListableBeanFactory
+4. <span style="color:red;">AbstractRefreshableApplicationContext</span> # <strong>refreshBeanFactory</strong> 创建DefaultListableBeanFactory
    
-5.<span style="color:red;">AbstractXmlApplicationContext</span> # **loadBeanDefinitions** 创建 XmlBeanDefinitionReader
+5. <span style="color:red;">AbstractXmlApplicationContext</span> # **loadBeanDefinitions** 创建 XmlBeanDefinitionReader
    
-6.<b>loadBeanDefinitions</b> 定位资源，使用 XmlBeanDefinitionReader 调用 loadBeanDefinitions
+6. <b>loadBeanDefinitions</b> 定位资源，使用 XmlBeanDefinitionReader 调用 loadBeanDefinitions
    
-7.<span style="color:red;">AbstractBeanDefinitionReader</span> # <b>loadBeanDefinitions</b> 遍历资源，进入子类 XmlBeanDefinitionReader 的 loadBeanDefinitions
+7. <span style="color:red;">AbstractBeanDefinitionReader</span> # <b>loadBeanDefinitions</b> 遍历资源，进入子类 XmlBeanDefinitionReader 的 loadBeanDefinitions
    
-8.<span style="color:red;">XmlBeanDefinitionReader</span> # <b>loadBeanDefinitions</b> 获取 IO 流，设置资源编码，调用具体方法 doLoadBeanDefinitions
+8. <span style="color:red;">XmlBeanDefinitionReader</span> # <b>loadBeanDefinitions</b> 获取 IO 流，设置资源编码，调用具体方法 doLoadBeanDefinitions
 
-9.<b>doLoadBeanDefinitions</b>  通过 doLoadDocument 解析 Xml 文件，获取 Document 对象，调用 registerBeanDefinitions 注册 BeanDefinition
+9. <b>doLoadBeanDefinitions</b>  通过 doLoadDocument 解析 Xml 文件，获取 Document 对象，调用 registerBeanDefinitions 注册 BeanDefinition
 
-10.<b>registerBeanDefinitions</b> 创建 BeanDefinitionReader，并由子类 DefaultBeanDefinitionDocumentReader 实现 registerBeanDefinitions 方法。
+10. <b>registerBeanDefinitions</b> 创建 BeanDefinitionReader，并由子类 DefaultBeanDefinitionDocumentReader 实现 registerBeanDefinitions 方法。
 
-11.<span style="color:red;">DefaultBeanDefinitionDocumentReader</span> # <b>registerBeanDefinitions</b> 获取 <beans> 标签，调用 doRegisterBeanDefinitions 来完成注册工作
+11. <span style="color:red;">DefaultBeanDefinitionDocumentReader</span> # <b>registerBeanDefinitions</b> 获取 <beans> 标签，调用 doRegisterBeanDefinitions 来完成注册工作
 
-12.<b>doRegisterBeanDefinitions</b>  采用委托模式由 BeanDefinitionParserDelegate 完成 BeanDefinition 解析工作，通过 parserBeanDefinitions 完成根标签解析
+12. <b>doRegisterBeanDefinitions</b>  采用委托模式由 BeanDefinitionParserDelegate 完成 BeanDefinition 解析工作，通过 parserBeanDefinitions 完成根标签解析
 
-13.<b>parserBeanDefinitions</b> 解析<beans> 下所有子节点
+13. <b>parserBeanDefinitions</b> 解析<beans> 下所有子节点
 
-14.<b>parserDefaultElement</b> 解析 <alias>、<bean>、<imoprt> 等，重要方法为解析 <bean> 标签的 processBeanDefinition
+14. <b>parserDefaultElement</b> 解析 <alias>、<bean>、<imoprt> 等，重要方法为解析 <bean> 标签的 processBeanDefinition
 
-15.<b>processBeanDefinition</b> 使用委托模式 BeanDefinitionParserDelegate 调用  parseBeanDefinitionElement 封装
+15. <b>processBeanDefinition</b> 使用委托模式 BeanDefinitionParserDelegate 调用  parseBeanDefinitionElement 封装
 
-16.<span style="color:red;">BeanDefinitionParserDelegate</span><b>parseBeanDefinitionElement</b> 调用重载方法 parseBeanDefinitionElement，内部再次调用 createBeanDefinition 方法解析并封装为 AbstractBeanDefinition 对象
+16. <span style="color:red;">BeanDefinitionParserDelegate</span><b>parseBeanDefinitionElement</b> 调用重载方法 parseBeanDefinitionElement，内部再次调用 createBeanDefinition 方法解析并封装为 AbstractBeanDefinition 对象
 
 <span style="color:red;">16.1</span> <b>createBeanDefinition</b> 最终调用 BeanDefinitionReaderUtils.createBeanDefinition() 通过反射创建 AbstractBeanDefinition 对象
 
