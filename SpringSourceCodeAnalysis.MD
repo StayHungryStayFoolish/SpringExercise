@@ -122,7 +122,9 @@
 ## ApplicationContext 方式 Spring IoC 容器加载过程
 
 ### 类 + 方法扼要说明
-```diff
+
+ ```css
+
 1.<span style="color:red;">new ClassPathXmlApplicationContext</span> # <strong>构造方法</strong>
 
 2.<span style="color:red;">AbstractApplicationContext</span> # <strong>refresh</strong> 刷新 Spring IoC 容器（删除原容器，创建新容器）
@@ -158,7 +160,7 @@
 <span style="color:red;">16.1</span> <b>createBeanDefinition</b> 最终调用 BeanDefinitionReaderUtils.createBeanDefinition() 通过反射创建 AbstractBeanDefinition 对象
 
 <span style="color:red;">16.2</span> <span style="color:red;"> 16.1 完成后调用</span><b>parserPropertyElements</b> 遍历 <property> 将解析的 PropertyValue 存入 BeanDefiniton 
-   
+```
 
 
 ### 代码分析 
