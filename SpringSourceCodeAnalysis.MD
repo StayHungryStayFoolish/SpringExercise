@@ -159,7 +159,7 @@
 
 16.1 **createBeanDefinition** 最终调用 BeanDefinitionReaderUtils.createBeanDefinition() 通过反射创建 AbstractBeanDefinition 对象
 
-16.2  16.1 完成后调用**parserPropertyElements** 遍历 <property> 将解析的 PropertyValue 存入 BeanDefiniton 
+16.2  16.1 完成后调用**parserPropertyElements** 遍历 <property> 将解析的 PropertyValue 存入 BeanDefinition 
 
 
 
