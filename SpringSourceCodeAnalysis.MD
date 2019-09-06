@@ -34,6 +34,8 @@
       - ApplicationEvenetPublisher	拥有容器上下文关系，启动、关闭时间等等。
       - ResourcePatternResovler	加载资源     
 
+
+
 ## Spring IoC 容器加载过程
 
 ### Spring IoC 入口
