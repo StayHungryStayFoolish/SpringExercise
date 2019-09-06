@@ -122,8 +122,8 @@
 ## ApplicationContext 方式 Spring IoC 容器加载过程
 
 ### 类 + 方法扼要说明
-
-1.this will be highlighted in green <span style="color:red;">new ClassPathXmlApplicationContext</span> # <strong>构造方法</strong>
+```diff
+1.<span style="color:red;">new ClassPathXmlApplicationContext</span> # <strong>构造方法</strong>
 
 2.<span style="color:red;">AbstractApplicationContext</span> # <strong>refresh</strong> 刷新 Spring IoC 容器（删除原容器，创建新容器）
    
