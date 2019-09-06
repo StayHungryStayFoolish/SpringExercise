@@ -1,4 +1,4 @@
-# Spring Source Code Analysis
+# Spring 类图关系、IoC 流程分析
 
 ## BeanFactory 继承体系 
 
@@ -43,6 +43,12 @@
 
 ![avatar](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/BeanDefinition.png?raw=true)
 
+- BeanDefinition **继承的接口**
+    - AttributeAccessor
+        - 对任意对象元数据操作
+    - BeanMetadataElement
+        -  获取可配置的源对象
+        
 - BeanDefinition **【描述 Bean 实例】**
   - 2个标注 Bean Scope 的常量（singleton、prototype）。
   - 3个标注 Bean 创建由哪种角色创建。
@@ -51,17 +57,11 @@
     - **可以理解为以 XML 方式定义的 Bean 在 IoC 容器内的表现形式**
     - 允许 **BeanFactoryPostProcessor** 在已经**初始化**，但**尚未实例化**的 Bean 覆盖或添加属性。比如实现类 **PropertyResourceConfigurer** 能够检索并修改属性值和别的 Bean 的元数据。
 
-- RootBeanDefinintion
+- RootBeanDefinition
   - 可以被 Merge 的 BeanDefinition。配置阶段进行在 BeanFactory 通常使用的类。在 Spring 4 以后，更好的选择是 GenericBeanDefinition。
 - GenericBeanDefinition
   - 一站式标准的 BeanDefinition。除了具有指定类可选的构造参数值、属性参数或其它 BeanDefinition 一样的特性外，还具有parenetName属性，这也意味着可以用来灵活设置。
-
-- BeanDefinition 继承的接口
-    - AttributeAccessor
-        - 对任意对象元数据操作
-    - BeanMetadataElement
-        -  获取可配置的源对象
-    
+      
 ------
 
 ## BeanDefinition 相关类说明
@@ -82,7 +82,7 @@
     - 解析 Xml 或 Properties 文件
   - **BeanDefinitionDocumentReader** 及子类 **DefaultBeanDefinitionDocumentReader**
     - 解析 Xml 文件封装的 Document 对象
-- 委托先关
+- **委托相关**
   - **BeanDefinitionParserDelegate**
     - 负责 BeanDefinition 的具体工作
 

@@ -8,9 +8,9 @@
 - **SpringBasic** 采用 XML 方式配置 MyBatis、AOP  
 - **SpringMybatisAnnotation** 采用注解方式配置 MyBatis  
 
-## Spring Source Code Analysis
+## Spring 类图关系、IoC 流程分析
 
-[Spring Source Code Analysis](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/SpringSourceCodeAnalysis.MD)
+[Spring 类图关系、IoC 流程分析](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/SpringSourceCodeAnalysis.MD)
 
 ## CustomIoC 
 
