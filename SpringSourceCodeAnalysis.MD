@@ -1,3 +1,11 @@
+<dl>
+  <dt>Definition list</dt>
+  <dd>Is something people use sometimes.</dd>
+
+  <dt>Markdown in HTML</dt>
+  <dd>Does *not* work **very** well. Use HTML <em>tags</em>.</dd>
+</dl>
+
 # Spring 类图关系、IoC 流程分析
 
 ## BeanFactory 继承体系 
