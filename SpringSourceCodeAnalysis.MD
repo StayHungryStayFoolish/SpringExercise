@@ -123,6 +123,10 @@
 
 ### 类 + 方法扼要说明
 
+#f03c15
+
+```diff + this will be highlighted in green - this will be highlighted in red ```
+
 1.```diff + new ClassPathXmlApplicationContext this will be highlighted in red```  new ClassPathXmlApplicationContext # <strong>构造方法</strong>
 
 2.<span style="color:red;">AbstractApplicationContext</span> # <strong>refresh</strong> 刷新 Spring IoC 容器（删除原容器，创建新容器）
