@@ -145,7 +145,7 @@
 
 11.<font color="red">DefaultBeanDefinitionDocumentReader</font> # <b>registerBeanDefinitions</b> 获取 <beans> 标签，调用 doRegisterBeanDefinitions 来完成注册工作
 
-12. <b>doRegisterBeanDefinitions</b>  采用委托模式由 BeanDefinitionParserDelegate 完成 BeanDefinition 解析工作，通过 parserBeanDefinitions 完成根标签解析
+12.<b>doRegisterBeanDefinitions</b>  采用委托模式由 BeanDefinitionParserDelegate 完成 BeanDefinition 解析工作，通过 parserBeanDefinitions 完成根标签解析
 
 13.<b>parserBeanDefinitions</b> 解析<beans> 下所有子节点
 
