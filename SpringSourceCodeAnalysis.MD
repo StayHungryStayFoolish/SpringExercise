@@ -123,13 +123,8 @@
 
 ### 类 + 方法扼要说明
 
-```diff
-- new ClassPathXmlApplicationContext in red
-
-- ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) `#f03c15`
-
 1.```diff 
-    + new ClassPathXmlApplicationContext # <strong>构造方法</strong>
+- new ClassPathXmlApplicationContext in red # <strong>构造方法</strong>
 
 2.<span style="color:red;">AbstractApplicationContext</span> # <strong>refresh</strong> 刷新 Spring IoC 容器（删除原容器，创建新容器）
    
