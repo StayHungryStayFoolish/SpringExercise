@@ -754,3 +754,32 @@
     	}
     ```
 
+---
+
+## Spring IoC 获取 Bean 实例过程
+
+### 类 + 方法扼要说明
+
+![avatar](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/GetBean.png?raw=true)
+
+1. AbstractBeanFactory # getBean 获取 Bean  实例
+
+2. **doGetBean** 根据 Bean Name 转换为规范名称，处理循环依赖（第3步），获取 Bean 实例（该 Bean 实例由两种情况：普通的 Bean、FactoryBean，第4步），并根据 Scope 创建 Bean 实例（第5步，单例创建 createBean 流程）
+   
+3. DefaultSingletonBeanRegistry #** getSingleton** 处理循环依赖，通过三个 Map 工程缓存集合处理
+
+4. AbstractBeanFactory # **getObjectBeanInstance** 如果是普通 Bean 直接返回，FactoryBean 则根据情况合并父类属性并最终通过 **getObjectFromFactoryBean** 获取（该方法最终调用 FactoryBean 的 getObject 获取 FactoryBean）,并进行后置处理（BeanPostProcessor）。
+         
+5. AbstractAutowireCapableBeanFactory # **createBean** 进行实例化前置处理（InstantiationAwareBeanPostProcessor），最终调用 doCreateBean 创建实例、注入属性、初始化
+            
+6. **doCreateBean** 实例化对象（第7步 createBeanInstance）、注入属性（第8步 populateBean）、初始化（第10步 initializeBean）
+               
+7. **createBeanInstance** 根据创建方式（工程方法、有参无参构造）创建实例（默认使用无参构造）
+                 
+8. **populateBean** 根据名称或类型将属性封装到 MutablePropertyValues，通过 applyPropertyValues 将属性注入
+                     
+9. **initializeBean**  使用 BeanPostProcessor 进行初始化前后置处理，并由 invokeInitMethods 初始化
+
+### 代码解析
+
+
