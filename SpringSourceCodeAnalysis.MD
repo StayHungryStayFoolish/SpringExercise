@@ -1,5 +1,5 @@
 # Spring 类图关系、IoC 流程分析
-
+te
 ## BeanFactory 继承体系 
 
 ![avatar](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/BeanFactory.png?raw=true)
