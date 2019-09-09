@@ -88,6 +88,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * value: 只实例化未初始化的实例（只存储 beanName 和 bean 实例映射关系）
 	 *
 	 * 只有循环依赖时，才会使用二级缓存（因为在循环依赖时需要提前曝光依赖的实例，所以该缓存名字也以 early 命名）
+	 * getSingleton（209 行使用）
 	 */
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
@@ -255,6 +256,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					this.suppressedExceptions = new LinkedHashSet<>();
 				}
 				try {
+					// 进入 AbstractAutowireCapableBeanFactory # doCreateBean （ 499 行 ）
 					singletonObject = singletonFactory.getObject();
 					// 如果是新的 Bean 实例，则在286行进行操作
 					newSingleton = true;
