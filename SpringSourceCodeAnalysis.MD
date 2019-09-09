@@ -980,32 +980,34 @@
     **Spring IoC 三级缓存**
 
     ```java
-    	/**
-    	 * 一级缓存：单例对象的 Cache
-    	 * value: 完全初始化的完整对象
-    	 *
-    	 * 一级缓存在 AbstractBeanFactory # doGetBean 的 Bean 实例创建完成时存入
-    	 */
-    	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
-    
-    
-    	/**
-    	 * 三级缓存：单例对象工厂（ ObjectFactory <?> ）的 Cache
-    	 * value: 将只完成实例化未初始化的实例提前暴露（不只放入缓存，还需要使用 BeanPostProcessor 进行后置处理）
-    	 * 该缓存在循环依赖中起决定作用：
-    	 * 例如：A - B - C (C - A) 依赖循环，A 创建 B，B 又创建 C ，C 又依赖 A 的时候，此时 A 会有判断是否正在创建中，
-    	 * 此时 A 属于创建中状态，C 则在三级缓存中提前暴露，从而完成 A 实例的初始化。
-    	 * 
-    	 * 三级缓存在  AbstractAutowireCapableBeanFactory # doCrateBean 创建时存入
-    	 */
-    	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
-    
-    
-    	/**
-    	 * 二级缓存：提前曝光的单例对象（通过三级缓存 ObjectFactory<?> 获取的 Bean 实例）的 Cache
-    	 * value: 只实例化未初始化的实例（只存储 beanName 和 bean 实例映射关系）
-    	 */
-    	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
+        	/**
+        	 * 一级缓存：单例对象的 Cache
+        	 * value: 完全初始化的完整对象
+        	 *
+        	 * 一级缓存在 AbstractBeanFactory # doGetBean 的 Bean 初始化完成时存入，并删除二、三级缓存
+        	 */
+        	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
+        
+        	/**
+        	 * 三级缓存：单例对象工厂（ ObjectFactory <?> ）的 Cache
+        	 * value: 将只完成实例化未初始化的实例提前暴露（不只放入缓存，
+        	 * 还需要使用 InstantiationAwareBeanPostProcessor 进行后置处理，处理过程中可能会改变 Bean 实例一些属性）
+        	 * 该缓存在循环依赖中起决定作用：
+        	 *
+        	 * 例如：A - B - C (C - A) 依赖循环，A 创建 B，B 又创建 C ，C 又依赖 A 的时候，此时 A 会有判断是否正在创建中，
+        	 * 此时 A 属于创建中状态，C 则在三级缓存中提前暴露，从而完成 A 实例的初始化。
+        	 *
+        	 * 三级缓存在  AbstractAutowireCapableBeanFactory # doCrateBean 创建实例时存入
+        	 */
+        	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
+        
+        	/**
+        	 * 二级缓存：提前曝光的需要被引用的单例对象（通过三级缓存 ObjectFactory<?> 获取的 Bean 实例）的 Cache
+        	 * value: 只实例化未初始化的实例（只存储 beanName 和 bean 实例映射关系）
+        	 *
+        	 * 只有循环依赖时，才会使用二级缓存（因为在循环依赖时需要提前曝光依赖的实例，所以该缓存名字也以 early 命名）
+        	 */
+        	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
     
     
     // -----------------------  以上为 IoC 容器的三个缓存 ----------------------------------
