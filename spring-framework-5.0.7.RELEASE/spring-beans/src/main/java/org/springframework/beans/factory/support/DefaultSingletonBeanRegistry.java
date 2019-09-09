@@ -63,6 +63,8 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	/**
 	 * 一级缓存：单例对象的 Cache
 	 * value: 完全初始化的完整对象
+	 *
+	 * 一级缓存在 AbstractBeanFactory # doGetBean 的 Bean 实例创建完成时存入
 	 */
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
@@ -73,6 +75,8 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * 该缓存在循环依赖中起决定作用：
 	 * 例如：A - B - C (C - A) 依赖循环，A 创建 B，B 又创建 C ，C 又依赖 A 的时候，此时 A 会有判断是否正在创建中，
 	 * 此时 A 属于创建中状态，C 则在三级缓存中提前暴露，从而完成 A 实例的初始化。
+	 *
+	 * 三级缓存在  AbstractAutowireCapableBeanFactory # doCrateBean 创建时存入
 	 */
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
@@ -141,9 +145,9 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		synchronized (this.singletonObjects) {
 			// 一级缓存
 			this.singletonObjects.put(beanName, singletonObject);
-			// 三级缓存
+			// 三级缓存移除
 			this.singletonFactories.remove(beanName);
-			// 二级缓存
+			// 二级缓存移除
 			this.earlySingletonObjects.remove(beanName);
 			// 已注册的 BeanName 集合
 			this.registeredSingletons.add(beanName);

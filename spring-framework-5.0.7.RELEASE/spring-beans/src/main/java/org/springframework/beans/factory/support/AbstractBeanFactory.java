@@ -281,6 +281,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				// Create bean instance.
 				// 创建 Bean 单例实例（只有单例会存入缓存）
 				if (mbd.isSingleton()) {
+					// 此处的 getSingleton 将完成的 Bean 实例存入了一级缓存
+					// 三级缓存在  AbstractAutowireCapableBeanFactory # doCrateBean 创建时存入
 					sharedInstance = getSingleton(beanName, () -> {
 						try {
 							// AbstractAutowireCapableBeanFactory 实现
