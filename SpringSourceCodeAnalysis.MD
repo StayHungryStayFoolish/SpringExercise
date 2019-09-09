@@ -103,7 +103,11 @@
 
 ---
 
-## Spring IoC 容器加载过程
+## Spring IoC 
+
+- Spring IoC 容器加载（BeanDefinition 注册）只是完成了 **BeanDefinition** 的注册，只是用 Map 数据结构维护了 BeanDefinition。
+
+- **getBean** 向 IoC 容器索要 Bean 时，通过一系列的操作最终完成了**属性输入（DI）**
 
 ### Spring IoC 入口
 
@@ -119,7 +123,7 @@
    ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
   ```
 
-## ApplicationContext 方式 Spring IoC 容器加载过程
+## ApplicationContext 方式 Spring IoC 容器加载（BeanDefinition 注册）过程
 
 ### 类 + 方法扼要说明
 
