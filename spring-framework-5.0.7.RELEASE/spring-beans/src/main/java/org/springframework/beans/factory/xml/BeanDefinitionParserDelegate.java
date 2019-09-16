@@ -1341,6 +1341,10 @@ public class BeanDefinitionParserDelegate {
 		}
 		// 根据不同命名获取不同的 handler
 		// 具体如何获取在 DefaultNamespaceHandlerResolver.resolve() 的 getHandlerMappings()
+		/**
+		 * @see DefaultNamespaceHandlerResolver#resolve(String)
+		 * @see DefaultNamespaceHandlerResolver#getHandlerMappings()
+		 */
 		NamespaceHandler handler = this.readerContext.getNamespaceHandlerResolver().resolve(namespaceUri);
 		if (handler == null) {
 			error("Unable to locate Spring NamespaceHandler for XML schema namespace [" + namespaceUri + "]", ele);

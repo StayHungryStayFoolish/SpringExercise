@@ -71,6 +71,10 @@ public abstract class NamespaceHandlerSupport implements NamespaceHandler {
 	public BeanDefinition parse(Element element, ParserContext parserContext) {
 		// NamespaceHandler 子类 init() 初始化了大量的 BeanDefinitionParser 来分别处理不同的自定义标签
 		// 从指定的 NamespaceHandler 中，匹配到指定的 BeanDefinitionParser
+		// 如果是 <aop:config> 标签则获取 ConfigBeanDefinitionParser，
+		/**
+		 * @see org.springframework.aop.config.ConfigBeanDefinitionParser#parse(Element, ParserContext)
+		 */
 		BeanDefinitionParser parser = findParserForElement(element, parserContext);
 		// 调用 BeanDefinitionParser 子类 AbstractBeanDefinitionParser 完成解析
 		return (parser != null ? parser.parse(element, parserContext) : null);
