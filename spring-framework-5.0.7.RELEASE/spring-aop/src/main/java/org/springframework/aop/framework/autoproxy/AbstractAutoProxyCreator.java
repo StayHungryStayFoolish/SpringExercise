@@ -47,9 +47,11 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.Element;
 
 /**
  * {@link org.springframework.beans.factory.config.BeanPostProcessor} implementation
@@ -265,8 +267,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			if (StringUtils.hasLength(beanName)) {
 				this.targetSourcedBeans.add(beanName);
 			}
-			// TODO: 2019-09-17
 			/**
+			 * @see org.springframework.aop.config.ConfigBeanDefinitionParser#configureAutoProxyCreator 注册了 AspectJAwareAdvisorAutoProxyCreator 具体参考 parse 方法
+			 * AspectJAwareAdvisorAutoProxyCreator 的父类是 AbstractAdvisorAutoProxyCreator，所以进入父类方法
 			 * @see AbstractAdvisorAutoProxyCreator#getAdvicesAndAdvisorsForBean(Class, String, TargetSource)
 			 */
 			Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(beanClass, beanName, targetSource);
@@ -354,8 +357,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		}
 
 		// Create proxy if we have advice.
-		// TODO: 2019-09-17
 		/**
+		 * @see org.springframework.aop.config.ConfigBeanDefinitionParser#configureAutoProxyCreator 注册了 AspectJAwareAdvisorAutoProxyCreator 具体参考 parse 方法
+		 * AspectJAwareAdvisorAutoProxyCreator 的父类是 AbstractAdvisorAutoProxyCreator，所以进入父类方法
 		 * @see AbstractAdvisorAutoProxyCreator#getAdvicesAndAdvisorsForBean(Class, String, TargetSource)
 		 */
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);

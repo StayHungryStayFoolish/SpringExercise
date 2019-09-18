@@ -65,6 +65,10 @@ public abstract class AopNamespaceUtils {
 	public static void registerAspectJAutoProxyCreatorIfNecessary(
 			ParserContext parserContext, Element sourceElement) {
 
+		/**
+		 * 注册 AspectJAwareAdvisorAutoProxyCreator 作为 BeanDefinition 到 BeanFactory 中
+		 * @see org.springframework.aop.aspectj.autoproxy.AspectJAwareAdvisorAutoProxyCreator
+		 */
 		BeanDefinition beanDefinition = AopConfigUtils.registerAspectJAutoProxyCreatorIfNecessary(
 				parserContext.getRegistry(), parserContext.extractSource(sourceElement));
 		// 将 proxy-target-class、expose-proxy 属性添加到 BeanDefinition
