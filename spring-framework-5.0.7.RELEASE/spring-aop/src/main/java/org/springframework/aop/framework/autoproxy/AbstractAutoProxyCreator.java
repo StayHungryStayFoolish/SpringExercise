@@ -36,6 +36,7 @@ import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.framework.ProxyProcessorSupport;
+import org.springframework.aop.framework.adapter.AdvisorAdapter;
 import org.springframework.aop.framework.adapter.AdvisorAdapterRegistry;
 import org.springframework.aop.framework.adapter.GlobalAdvisorAdapterRegistry;
 import org.springframework.aop.target.SingletonTargetSource;
@@ -308,7 +309,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		if (bean != null) {
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
 			if (!this.earlyProxyReferences.contains(cacheKey)) {
-				// 使用动态结束，创建代理对象
+				// 使用动态技术，创建代理对象
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}
 		}
