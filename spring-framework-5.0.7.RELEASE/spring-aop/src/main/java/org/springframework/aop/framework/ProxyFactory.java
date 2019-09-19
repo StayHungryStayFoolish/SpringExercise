@@ -31,6 +31,9 @@ import org.springframework.util.ClassUtils;
  * @author Juergen Hoeller
  * @author Rob Harrop
  * @since 14.03.2003
+ * ProxyFactoryBean 和 ProxyFactory 使用的 Spring 自己的实现。
+ * 两者的区别在于 ProxyFactoryBean 可以直接通过声明式配置而 ProxyFactory 只能通过编程式配置。
+ * AspectJProxyFactory 利用的是 AspectJ 的实现。
  */
 @SuppressWarnings("serial")
 public class ProxyFactory extends ProxyCreatorSupport {
