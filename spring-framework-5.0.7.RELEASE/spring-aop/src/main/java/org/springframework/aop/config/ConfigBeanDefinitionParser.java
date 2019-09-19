@@ -118,12 +118,30 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 		for (Element elt: childElts) {
 			String localName = parserContext.getDelegate().getLocalName(elt);
 			if (POINTCUT.equals(localName)) {
+				// 解析 <aop:pointcut>
+				/**
+				 * 生成 AspectJExpressionPointcut 的 BeanDefinition 对象并注册
+				 * @see #parsePointcut
+				 * @see #createPointcutDefinition
+				 */
 				parsePointcut(elt, parserContext);
 			}
 			else if (ADVISOR.equals(localName)) {
+				// 解析 <aop:advisor>
+				/**
+				 * Spring AOP 实现方式
+				 * 生成 DefaultBeanFactoryPointcutAdvisor 的 BeanDefinition 对象并注册
+				 * @see #createAdvisorBeanDefinition
+				 */
 				parseAdvisor(elt, parserContext);
 			}
 			else if (ASPECT.equals(localName)) {
+				// 解析 <aop:aspect>
+				/**
+				 * AspectJ 实现方式
+				 * @see #getAdviceClass
+				 * 生成 AspectJMethodBeforeAdvice、AspectJAfterAdvice、AspectJAfterReturningAdvice、AspectJAfterThrowingAdvice、AspectJAroundAdvice 五个标签通知类
+				 */
 				parseAspect(elt, parserContext);
 			}
 		}
@@ -205,7 +223,9 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 	}
 
 	private void parseAspect(Element aspectElement, ParserContext parserContext) {
+		// 获取 <aop:aspect> 标签的 id 属性值
 		String aspectId = aspectElement.getAttribute(ID);
+		// 获取 <aop:aspect> 标签的 ref 属性值
 		String aspectName = aspectElement.getAttribute(REF);
 
 		try {
@@ -213,6 +233,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 			List<BeanDefinition> beanDefinitions = new ArrayList<>();
 			List<BeanReference> beanReferences = new ArrayList<>();
 
+			// 处理 <aop:aspect> 标签的 <aop:declare-parents> 子标签
 			List<Element> declareParents = DomUtils.getChildElementsByTagName(aspectElement, DECLARE_PARENTS);
 			for (int i = METHOD_INDEX; i < declareParents.size(); i++) {
 				Element declareParentsElement = declareParents.get(i);
@@ -221,10 +242,12 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 
 			// We have to parse "advice" and all the advice kinds in one loop, to get the
 			// ordering semantics right.
+			// 获取 <aop:aspect> 标签的所有子标签
 			NodeList nodeList = aspectElement.getChildNodes();
 			boolean adviceFoundAlready = false;
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node node = nodeList.item(i);
+				// 判断是否是 <aop:before>、<aop:after>、<aop:after-returning>、<aop:after-throwing method="">、<aop:around method=""> 五个标签
 				if (isAdviceNode(node, parserContext)) {
 					if (!adviceFoundAlready) {
 						adviceFoundAlready = true;
@@ -236,6 +259,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 						}
 						beanReferences.add(new RuntimeBeanReference(aspectName));
 					}
+					// 解析 <aop:before>、<aop:around>、<aop:after>、<aop:after-returning>、<aop:after-throwing> 五个子标签
 					AbstractBeanDefinition advisorDefinition = parseAdvice(
 							aspectName, i, aspectElement, (Element) node, parserContext, beanDefinitions, beanReferences);
 					beanDefinitions.add(advisorDefinition);
@@ -319,6 +343,12 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 	 * Parses one of '{@code before}', '{@code after}', '{@code after-returning}',
 	 * '{@code after-throwing}' or '{@code around}' and registers the resulting
 	 * BeanDefinition with the supplied BeanDefinitionRegistry.
+	 * @param aspectName
+	 * 					<aop:aspect ref="xmlAdvice"> 标签内 ref 的值，也就是对应的 <bean id="xmlAdvice" class="io.stayhungrystayfoolish.aop.advice.XMLAdvice"/> Bean 的 id
+	 * @param aspectElement
+	 * 					<aop:config> 的子标签 <aop:aspect>
+	 * @param adviceElement
+	 * 					当前节点
 	 * @return the generated advice RootBeanDefinition
 	 */
 	private AbstractBeanDefinition parseAdvice(
@@ -329,7 +359,9 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 			this.parseState.push(new AdviceEntry(parserContext.getDelegate().getLocalName(adviceElement)));
 
 			// create the method factory bean
+			// 创建方法工厂 MethodLocatingFactoryBean 的 BeanDefinition 对象：用于获取 Advice 增强类的 Method 对象
 			RootBeanDefinition methodDefinition = new RootBeanDefinition(MethodLocatingFactoryBean.class);
+			// 设置 MethodLocatingFactoryBean 的 targetBeanName 为 advice 类的引用名称(此处相当于 SpringBasic 的 XMLAdvice)
 			methodDefinition.getPropertyValues().add("targetBeanName", aspectName);
 			methodDefinition.getPropertyValues().add("methodName", adviceElement.getAttribute("method"));
 			methodDefinition.setSynthetic(true);
