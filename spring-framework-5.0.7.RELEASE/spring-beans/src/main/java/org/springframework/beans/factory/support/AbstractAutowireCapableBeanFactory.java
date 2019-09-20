@@ -387,11 +387,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	@Override
 	public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
 			throws BeansException {
-
+		// 将目标对象赋值给代理对象，最后 IOC 存储的是代理对象
 		Object result = existingBean;
 		for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
 			// 执行所有 beanProcessor.postProcessAfterInitialization
+			/**
+			 * AOP 生成代理对象
+			 * @see org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#postProcessAfterInitialization
+			 */
 			Object current = beanProcessor.postProcessAfterInitialization(result, beanName);
+			// 如果没有进行 PostProcessor 后置处理，则直接返回目标对象，否则返回生成的代理对象
 			if (current == null) {
 				return result;
 			}
@@ -1711,6 +1716,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 		if (mbd == null || !mbd.isSynthetic()) {
 			// 应用 BeanPostProcessor 的 postProcessAfterInitialization 方法(AOP 代理对象生成)
+			// IOC 一级容器只存储代理对象
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
 		}
 
