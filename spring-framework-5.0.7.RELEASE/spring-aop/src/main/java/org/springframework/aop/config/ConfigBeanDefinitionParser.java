@@ -141,7 +141,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 				 * AspectJ 实现方式
 				 * @see #getAdviceClass
 				 * 生成 AspectJMethodBeforeAdvice、AspectJAfterAdvice、AspectJAfterReturningAdvice、AspectJAfterThrowingAdvice、AspectJAroundAdvice 五个标签通知类
-				 * 解析 advice 生成 AspectJPointcutAdvisor 类的 BeanDefinition 对象
+				 * 解析 advice 生成 AspectJPointcutAdvisor 类的 BeanDefinition 对象，该类最终会形成执行链对目标对象进行增强
 				 * 共生成 6 个对象
 				 */
 				parseAspect(elt, parserContext);
@@ -262,7 +262,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 						beanReferences.add(new RuntimeBeanReference(aspectName));
 					}
 					// 解析 <aop:before>、<aop:around>、<aop:after>、<aop:after-returning>、<aop:after-throwing> 五个子标签
-					// 解析 advice 生成 AspectJPointcutAdvisor 类的 BeanDefinition 对象
+					// 解析 advice 生成 AspectJPointcutAdvisor 类的 BeanDefinition 对象，该类最终会形成执行链对目标对象进行增强
 					AbstractBeanDefinition advisorDefinition = parseAdvice(
 							aspectName, i, aspectElement, (Element) node, parserContext, beanDefinitions, beanReferences);
 					beanDefinitions.add(advisorDefinition);
@@ -383,7 +383,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 					beanDefinitions, beanReferences);
 
 			// configure the advisor
-			// 封装 AspectJPointcutAdvisor 切点通知器类对象
+			// 封装 AspectJPointcutAdvisor 切点通知器类对象，该类最终会形成执行链对目标对象进行增强
 			RootBeanDefinition advisorDefinition = new RootBeanDefinition(AspectJPointcutAdvisor.class);
 			// 通知器设置相关属性
 			advisorDefinition.setSource(parserContext.extractSource(adviceElement));
@@ -415,7 +415,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 			RootBeanDefinition methodDef, RootBeanDefinition aspectFactoryDef,
 			List<BeanDefinition> beanDefinitions, List<BeanReference> beanReferences) {
 
-		// 1. 根据 adviceElement 节点分析出是什么类型的 Advice
+		// 根据 adviceElement 节点分析出是什么类型的 Advice
 		/**
 		 * @see #getAdviceClass(Element, ParserContext)
 		 */
@@ -441,12 +441,14 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 					ARG_NAMES_PROPERTY, adviceElement.getAttribute(ARG_NAMES));
 		}
 
-		// 设置构造参数的参数
+		// 获取并设置构造参数的三个参数
 		ConstructorArgumentValues cav = adviceDefinition.getConstructorArgumentValues();
+		// 1. 设置 MethodLocatingFactoryBean 参数
 		cav.addIndexedArgumentValue(METHOD_INDEX, methodDef);
 
 		// 解析 point-cut 属性，可能是 BeanDefinition 也可能是 ref 的 String 类型
 		Object pointcut = parsePointcutProperty(adviceElement, parserContext);
+		// 2. 设置 AspectJExpressionPointcut 参数
 		if (pointcut instanceof BeanDefinition) {
 			cav.addIndexedArgumentValue(POINTCUT_INDEX, pointcut);
 			beanDefinitions.add((BeanDefinition) pointcut);
@@ -457,6 +459,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 			beanReferences.add(pointcutRef);
 		}
 
+		// 3. 设置 AspectJPointcutAdvisor 参数
 		cav.addIndexedArgumentValue(ASPECT_INSTANCE_FACTORY_INDEX, aspectFactoryDef);
 
 		return adviceDefinition;

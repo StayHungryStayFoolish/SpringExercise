@@ -463,6 +463,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		}
 
 		ProxyFactory proxyFactory = new ProxyFactory();
+		// 初始化当前类 AbstractAutoProxyCreator 配置
 		proxyFactory.copyFrom(this);
 
 		if (!proxyFactory.isProxyTargetClass()) {
@@ -568,6 +569,8 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 				advisors.add(this.advisorAdapterRegistry.wrap(next));
 			}
 		}
+		// list.toArray(new Array[0]) 效率会更高一些，初始化一个0的数组，然后将运行时数据填充
+		// 同时也比 list.toArray(new Array[list.size]) 更简洁。
 		return advisors.toArray(new Advisor[0]);
 	}
 
