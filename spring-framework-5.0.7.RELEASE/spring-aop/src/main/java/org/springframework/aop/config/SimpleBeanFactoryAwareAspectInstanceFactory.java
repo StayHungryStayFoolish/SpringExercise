@@ -32,6 +32,8 @@ import org.springframework.util.ClassUtils;
  * @author Rob Harrop
  * @author Juergen Hoeller
  * @since 2.0
+ * 实现了BeanFactoryAware接口，在实例化的时候会调用到 setBeanFactory 方法，可以获取 BeanFactory 。
+ * @see #getAspectInstance，根据切面名字就可以拿到切面类的实例。
  */
 public class SimpleBeanFactoryAwareAspectInstanceFactory implements AspectInstanceFactory, BeanFactoryAware {
 
