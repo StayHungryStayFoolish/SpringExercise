@@ -369,10 +369,13 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		 * @see AbstractAdvisorAutoProxyCreator#getAdvicesAndAdvisorsForBean(Class, String, TargetSource)
 		 */
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
+		// 如果不为 null，生成代理对象
 		if (specificInterceptors != DO_NOT_PROXY) {
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
+			// 3. 产生代理对象
 			Object proxy = createProxy(
 					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
+			// 4. 代理类型缓存
 			this.proxyTypes.put(cacheKey, proxy.getClass());
 			return proxy;
 		}
@@ -471,15 +474,25 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		// 初始化当前类 AbstractAutoProxyCreator 配置
 		proxyFactory.copyFrom(this);
 
+		// 如果不使用 CGLIB 代理，进去流程
+		// isProxyTargetClass 判断 <aop:config> 标签的 ProxyTargetClass 属性，该属性如果是 true 使用 CGLIB，false 使用 JDK
 		if (!proxyFactory.isProxyTargetClass()) {
+			// 再次判断是否可能使用 CGLIB
 			if (shouldProxyTargetClass(beanClass, beanName)) {
 				proxyFactory.setProxyTargetClass(true);
 			}
 			else {
+				// 查看 BeanClass 对应的类是否含有  InitializingBean.class、DisposableBean.class、Aware.class 等
+				// 如果有，使用 CGLIB 代理
 				evaluateProxyInterfaces(beanClass, proxyFactory);
 			}
 		}
 
+
+		/**
+		 * 获取所有关联的 Advisor，将 Advisor 和 Advice 统一封装为 Advisor
+		 * @see org.springframework.aop.framework.adapter.DefaultAdvisorAdapterRegistry#wrap(Object)
+		 */
 		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
 		proxyFactory.addAdvisors(advisors);
 		proxyFactory.setTargetSource(targetSource);
