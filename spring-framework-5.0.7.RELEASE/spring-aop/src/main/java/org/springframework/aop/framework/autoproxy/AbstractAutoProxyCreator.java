@@ -353,6 +353,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
 			return bean;
 		}
+		// 如果是基础设施类，不做代理处理，比如：Advice、Pointcut、Advisor、AopInfrastructureBean、、
 		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
 			this.advisedBeans.put(cacheKey, Boolean.FALSE);
 			return bean;
@@ -360,6 +361,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
 		// Create proxy if we have advice.
 		/**
+		 * 查找代理类相关的 Advisor 对象集合
+		 * 1. 查找候选的 Advisor
+		 * 2. 获取合适的 Advisor
 		 * @see org.springframework.aop.config.ConfigBeanDefinitionParser#configureAutoProxyCreator 注册了 AspectJAwareAdvisorAutoProxyCreator 具体参考 parse 方法
 		 * AspectJAwareAdvisorAutoProxyCreator 的父类是 AbstractAdvisorAutoProxyCreator，所以进入父类方法
 		 * @see AbstractAdvisorAutoProxyCreator#getAdvicesAndAdvisorsForBean(Class, String, TargetSource)
