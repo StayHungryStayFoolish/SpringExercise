@@ -102,6 +102,10 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 		if (!this.active) {
 			activate();
 		}
+		/**
+		 * 具体是 JDK 还是 CGLIB 的代理
+		 * @see org.springframework.aop.framework.DefaultAopProxyFactory#createAopProxy(AdvisedSupport) 
+		 */
 		return getAopProxyFactory().createAopProxy(this);
 	}
 

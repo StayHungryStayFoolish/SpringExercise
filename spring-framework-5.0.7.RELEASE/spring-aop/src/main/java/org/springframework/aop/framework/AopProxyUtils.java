@@ -121,9 +121,11 @@ public abstract class AopProxyUtils {
 			// No user-specified interfaces: check whether target class is an interface.
 			Class<?> targetClass = advised.getTargetClass();
 			if (targetClass != null) {
+				// 如果是接口，直接设置
 				if (targetClass.isInterface()) {
 					advised.setInterfaces(targetClass);
 				}
+				// 如果是 Proxy 类，获取代理对象的接口
 				else if (Proxy.isProxyClass(targetClass)) {
 					advised.setInterfaces(targetClass.getInterfaces());
 				}

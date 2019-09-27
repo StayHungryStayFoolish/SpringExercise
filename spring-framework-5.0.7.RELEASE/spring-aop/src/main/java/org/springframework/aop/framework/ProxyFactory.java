@@ -110,6 +110,13 @@ public class ProxyFactory extends ProxyCreatorSupport {
 	 * @return the proxy object
 	 */
 	public Object getProxy(@Nullable ClassLoader classLoader) {
+		// 1. 创建 JDK 或  CGLIB 方式的 AopProxy
+		// 2. 使用 AopProxy 创建代理对象
+		/**
+		 * 具体是 JDK 还是 CGLIB 的代理
+		 * @see #createAopProxy()
+		 * @see org.springframework.aop.framework.DefaultAopProxyFactory#createAopProxy(AdvisedSupport)
+		 */
 		return createAopProxy().getProxy(classLoader);
 	}
 

@@ -503,6 +503,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			proxyFactory.setPreFiltered(true);
 		}
 
+		// 使用 JDK 或 CGLIB 生成代理对象
 		return proxyFactory.getProxy(getProxyClassLoader());
 	}
 
