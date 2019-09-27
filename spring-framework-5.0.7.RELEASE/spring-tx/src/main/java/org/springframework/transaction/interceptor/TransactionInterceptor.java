@@ -86,6 +86,9 @@ public class TransactionInterceptor extends TransactionAspectSupport implements 
 	}
 
 
+	/**
+	 * 事务处理入口
+	 */
 	@Override
 	@Nullable
 	public Object invoke(final MethodInvocation invocation) throws Throwable {
