@@ -10,7 +10,7 @@
 
 ## Spring 类图关系、IoC 流程分析
 
-[Spring 类图关系、IoC 流程分析](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/SpringSourceCodeAnalysis.MD)
+[Spring 类图关系、IoC 流程分析](https://github.com/StayHungryStayFoolish/SpringIOCExercise/blob/master/IoC.MD)
 
 ## CustomIoC 
 
