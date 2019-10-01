@@ -377,7 +377,20 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 			aspectFactoryDef.setSynthetic(true);
 
 			// register the pointcut
-			// 涉及 point-cut 属性的解析，并结合上述的两个bean 最终包装为 AbstractAspectJAdvice 通知对象
+			// 涉及 point-cut 属性的解析，并调用 getAdviceClass 生成5个通知类，并结合上述的两个bean 最终包装为通知对象
+			/**
+			 * <aop:point-cut> 标签对应的是 AspectJExpressionPointcut
+			 * @see org.springframework.aop.aspectj.AspectJExpressionPointcut
+			 *
+			 * <aop:before>、<aop:after>、<aop:around>、<aop:after-returning>、<aop:throwing> 标签对应的是 AbstractAspectJAdvice 子类
+			 * @see org.springframework.aop.aspectj.AbstractAspectJAdvice
+			 *
+			 * <aop:advisor> 标签对应的是 DefaultBeanFactoryPointcutAdvisor
+			 * @see org.springframework.aop.support.DefaultBeanFactoryPointcutAdvisor
+			 *
+			 * <aop:aspect>  AspectJPointcutAdvisor
+			 * @see org.springframework.aop.aspectj.AspectJPointcutAdvisor
+			 */
 			AbstractBeanDefinition adviceDef = createAdviceDefinition(
 					adviceElement, parserContext, aspectName, order, methodDefinition, aspectFactoryDef,
 					beanDefinitions, beanReferences);
