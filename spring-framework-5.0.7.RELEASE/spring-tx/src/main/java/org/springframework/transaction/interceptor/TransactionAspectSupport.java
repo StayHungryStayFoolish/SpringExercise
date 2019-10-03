@@ -278,7 +278,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		// If the transaction attribute is null, the method is non-transactional.
 		// 获取事务属性，如果未空，说明不支持事务
 		TransactionAttributeSource tas = getTransactionAttributeSource();
-		// 获取事务属性
+		// 获取事务传播属性
 		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
 		// 确定具体事务平台
 		final PlatformTransactionManager tm = determineTransactionManager(txAttr);
@@ -383,7 +383,9 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		}
 
 		String qualifier = txAttr.getQualifier();
+		// 确定事务管理平台
 		if (StringUtils.hasText(qualifier)) {
+			// 无论走哪个流程，最终都是从对应的 BeanFactory 获取
 			return determineQualifiedTransactionManager(this.beanFactory, qualifier);
 		}
 		else if (StringUtils.hasText(this.transactionManagerBeanName)) {
