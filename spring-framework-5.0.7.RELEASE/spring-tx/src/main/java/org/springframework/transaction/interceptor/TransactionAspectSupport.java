@@ -283,6 +283,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
 		// 确定具体事务平台，无论走哪个流程，最终都是从对应的 BeanFactory 获取
 		final PlatformTransactionManager tm = determineTransactionManager(txAttr);
+		// 目标方法唯一标识（类.方法，如service.UserServiceImpl.save）
 		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
 
 		if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager)) {
@@ -294,25 +295,27 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				// This is an around advice: Invoke the next interceptor in the chain.
 				// This will normally result in a target object being invoked.
 				/**
+				 * 回调方法执行，执行目标方法
 				 * @see org.springframework.transaction.interceptor.TransactionInterceptor#invoke(MethodInvocation)  
 				 */
 				retVal = invocation.proceedWithInvocation();
 			}
 			catch (Throwable ex) {
 				// target invocation exception
-				// 执行事务 rollback 方法
+				// 异常则执行事务 rollback 方法
 				completeTransactionAfterThrowing(txInfo, ex);
 				throw ex;
 			}
 			finally {
+				// 清楚事务信息
 				cleanupTransactionInfo(txInfo);
 			}
-			// 执行事务 commit 方法
+			// 正常情况最后执行事务 commit 方法
 			commitTransactionAfterReturning(txInfo);
 			return retVal;
 		}
 
-		else {
+		else { // 编程式事务处理(CallbackPreferringPlatformTransactionManager) 不做重点分析
 			final ThrowableHolder throwableHolder = new ThrowableHolder();
 
 			// It's a CallbackPreferringPlatformTransactionManager: pass a TransactionCallback in.
@@ -529,6 +532,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		// We always bind the TransactionInfo to the thread, even if we didn't create
 		// a new transaction here. This guarantees that the TransactionInfo stack
 		// will be managed correctly even if no transaction was created by this aspect.
+		// 生成一个 TransactionInfo 并绑定到当前线程的 ThreadLocal
 		txInfo.bindToThread();
 		return txInfo;
 	}

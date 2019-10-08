@@ -236,8 +236,11 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	protected Object doGetTransaction() {
 		DataSourceTransactionObject txObject = new DataSourceTransactionObject();
 		txObject.setSavepointAllowed(isNestedTransactionAllowed());
+		// TransactionSynchronizationManager 很重要，是对 connection 的核心获取、持有、删除等
+		// 这个 ConnectionHolder 是放在 TransactionSynchronizationManager 的 ThreadLocal 中持有的，如果是第一次来获取，肯定得到是null。
 		ConnectionHolder conHolder =
 				(ConnectionHolder) TransactionSynchronizationManager.getResource(obtainDataSource());
+		// 所以这里不论获取到或者获取不到都将此设置 newConnectionHolder 为 false
 		txObject.setConnectionHolder(conHolder, false);
 		return txObject;
 	}
@@ -259,10 +262,14 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		try {
 			if (!txObject.hasConnectionHolder() ||
 					txObject.getConnectionHolder().isSynchronizedWithTransaction()) {
+				// 获取数据库连接
 				Connection newCon = obtainDataSource().getConnection();
 				if (logger.isDebugEnabled()) {
 					logger.debug("Acquired Connection [" + newCon + "] for JDBC transaction");
 				}
+				// 如果Propagation为：PROPAGATION_REQUIRED,PROPAGATION_REQUIRES_NEW,PROPAGATION_NESTED 中的一个将开启一个新事物，
+				// new 一个新的 DefaultTransactionStatus ，并且 newTransaction 设置为 true，
+				// 这个状态很重要，因为后面的不论回滚、提交都是根据这个属性来判断是否在这个 TransactionStatus 上来进行
 				txObject.setConnectionHolder(new ConnectionHolder(newCon), true);
 			}
 
@@ -280,6 +287,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 				if (logger.isDebugEnabled()) {
 					logger.debug("Switching JDBC Connection [" + con + "] to manual commit");
 				}
+				// 开启事务，设置 autoCommit 为 false
 				con.setAutoCommit(false);
 			}
 
@@ -293,6 +301,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 			// Bind the connection holder to the thread.
 			if (txObject.isNewConnectionHolder()) {
+				// 这里将当前的 connection 放入 TransactionSynchronizationManager 中持有，如果下次调用可以判断为已有的事务
 				TransactionSynchronizationManager.bindResource(obtainDataSource(), txObject.getConnectionHolder());
 			}
 		}
