@@ -1,4 +1,4 @@
-# Spring AOP 源码解析
+# Spring AOP 及事务源码解析
 
 ## AOP 相关节点解析后对应的 BeanClass
 
@@ -432,6 +432,192 @@
     	else {
     		throw new IllegalArgumentException("Unknown advice kind [" + elementName + "].");
     	}
+    }
+    ```
+
+------
+
+## Transaction 事务处理流程
+
+-   因为事务的 BeanDefinition 在 AOP 第2步的 **NamespaceHandler handler = this.readerContext.getNamespaceHandlerResolver().resolve(namespaceUri);** 已经注册到 IoC 容器中，所以事务处理只需看处理流程即可。
+
+-   **事务流程的入口：**
+    -   加上 **@Transactional** 注解之后，Spring可以启到事务控制的功能了，再正式执行方法前它会做一些操作
+    -   首先进入 **CglibAopProxy.class** 的 **intercept** 方法或者 **JdkDynamicAopProxy.class** 的 **invoke **方法（继承接口方式），根据不同实现方法选择不同的动态代理类
+    -   之后进入到 **ReflectiveMethodInvocation.class** 然后一步一步往下走来到 **invoke** 方法，最终进入 **TransactionInterceptor** 的 **invoke** 方法。
+    -   从 **MethodInterceptor** 子类寻找，因为事务的实现就是通过 AOP，而代理最终都会调用 **invoke** 方法。所以事务的入口类是 **TransactionInterceptor**。
+
+------
+
+1.   **TransactionInterceptor**  事务入口，最终调用父类 **TransactionAspectSupport** 的**invokeWithinTransaction** 实现事务支持。
+
+    ```java
+    /**
+     * 事务处理入口
+     */
+    @Override
+    @Nullable
+    public Object invoke(final MethodInvocation invocation) throws Throwable {
+    	// Work out the target class: may be {@code null}.
+    	// The TransactionAttributeSource should be passed the target class
+    	// as well as the method, which may be from an interface.
+    	Class<?> targetClass = (invocation.getThis() != null ? AopUtils.getTargetClass(invocation.getThis()) : null);
+    	// Adapt to TransactionAspectSupport's invokeWithinTransaction...
+    	return invokeWithinTransaction(invocation.getMethod(), targetClass, invocation::proceed);
+    }
+    ```
+
+2.  **TransactionAspectSupport**  的 **invokeWithinTransaction** 实现事务支持，通过 **determineTransactionManager** 获取具体事务管理平台， 并通过 **createTransactionIfNecessary** 创建事务，执行调用链 **invocation.proceedWithInvocation()** 并最终执行事务。
+
+    ```java
+    @Nullable
+    protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targetClass,
+    		final InvocationCallback invocation) throws Throwable {
+    	// If the transaction attribute is null, the method is non-transactional.
+    	// 获取事务属性，如果未空，说明不支持事务
+    	TransactionAttributeSource tas = getTransactionAttributeSource();
+    	// 获取事务属性
+    	final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
+    	// 确定具体事务平台
+    	final PlatformTransactionManager tm = determineTransactionManager(txAttr);
+    	final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
+    	if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager)) {
+    		// Standard transaction demarcation with getTransaction and commit/rollback calls.
+    		// 创建事务信息对象，通过事务平台创建事务
+    		TransactionInfo txInfo = createTransactionIfNecessary(tm, txAttr, joinpointIdentification);
+    		Object retVal = null;
+    		try {
+    			// This is an around advice: Invoke the next interceptor in the chain.
+    			// This will normally result in a target object being invoked.
+    			retVal = invocation.proceedWithInvocation();
+    		}
+    		catch (Throwable ex) {
+    			// target invocation exception
+    			// 执行事务 rollback 方法
+    			completeTransactionAfterThrowing(txInfo, ex);
+    			throw ex;
+    		}
+    		finally {
+    			cleanupTransactionInfo(txInfo);
+    		}
+    		// 执行事务 commit 方法
+    		commitTransactionAfterReturning(txInfo);
+    		return retVal;
+    	}
+    	else {
+    		final ThrowableHolder throwableHolder = new ThrowableHolder();
+    		// It's a CallbackPreferringPlatformTransactionManager: pass a TransactionCallback in.
+    		try {
+    			Object result = ((CallbackPreferringPlatformTransactionManager) tm).execute(txAttr, status -> {
+    				TransactionInfo txInfo = prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);
+    				try {
+    					return invocation.proceedWithInvocation();
+    				}
+    				catch (Throwable ex) {
+    					if (txAttr.rollbackOn(ex)) {
+    						// A RuntimeException: will lead to a rollback.
+    						if (ex instanceof RuntimeException) {
+    							throw (RuntimeException) ex;
+    						}
+    						else {
+    							throw new ThrowableHolderException(ex);
+    						}
+    					}
+    					else {
+    						// A normal return value: will lead to a commit.
+    						throwableHolder.throwable = ex;
+    						return null;
+    					}
+    				}
+    				finally {
+    					cleanupTransactionInfo(txInfo);
+    				}
+    			});
+    			// Check result state: It might indicate a Throwable to rethrow.
+    			if (throwableHolder.throwable != null) {
+    				throw throwableHolder.throwable;
+    			}
+    			return result;
+    		}
+    		catch (ThrowableHolderException ex) {
+    			throw ex.getCause();
+    		}
+    		catch (TransactionSystemException ex2) {
+    			...
+    		}
+    		catch (Throwable ex2) {
+                ...
+    		}
+    	}
+    }
+    ```
+
+3.   **determineTransactionManager**  最终从 BeanFactory 充获取事务管理对象，MyBatis 和 JDBC 使用 DataSourceTransactionManager，JPA 使用 JpaTransactionManager
+
+    ```java
+    @Nullable
+    protected PlatformTransactionManager determineTransactionManager(@Nullable TransactionAttribute txAttr) {
+    	// Do not attempt to lookup tx manager if no tx attributes are set
+    	if (txAttr == null || this.beanFactory == null) {
+    		return getTransactionManager();
+    	}
+    	String qualifier = txAttr.getQualifier();
+    	// 确定事务管理平台
+    	if (StringUtils.hasText(qualifier)) {
+    		// 无论走哪个流程，最终都是从对应的 BeanFactory 获取
+    		return determineQualifiedTransactionManager(this.beanFactory, qualifier);
+    	}
+    	else if (StringUtils.hasText(this.transactionManagerBeanName)) {
+    		return determineQualifiedTransactionManager(this.beanFactory, this.transactionManagerBeanName);
+    	}
+    	else {
+    		PlatformTransactionManager defaultTransactionManager = getTransactionManager();
+    		if (defaultTransactionManager == null) {
+    			defaultTransactionManager = this.transactionManagerCache.get(DEFAULT_TRANSACTION_MANAGER_KEY);
+    			if (defaultTransactionManager == null) {
+    				// 从 spring 容器中获取指定的平台事务管理器
+    				defaultTransactionManager = this.beanFactory.getBean(PlatformTransactionManager.class);
+    				this.transactionManagerCache.putIfAbsent(
+    						DEFAULT_TRANSACTION_MANAGER_KEY, defaultTransactionManager);
+    			}
+    		}
+    		return defaultTransactionManager;
+    	}
+    }
+    ```
+
+4.   **createTransactionIfNecessary** 根据不同的事务管理平台创建事务
+
+    ```java
+    @SuppressWarnings("serial")
+    protected TransactionInfo createTransactionIfNecessary(@Nullable PlatformTransactionManager tm,
+    		@Nullable TransactionAttribute txAttr, final String joinpointIdentification) {
+    	// If no name specified, apply method identification as transaction name.
+    	if (txAttr != null && txAttr.getName() == null) {
+    		txAttr = new DelegatingTransactionAttribute(txAttr) {
+    			@Override
+    			public String getName() {
+    				return joinpointIdentification;
+    			}
+    		};
+    	}
+    	// 事务的状态
+    	TransactionStatus status = null;
+    	if (txAttr != null) {
+    		if (tm != null) {
+    			/**
+    			 * @see org.springframework.transaction.support.AbstractPlatformTransactionManager#getTransaction(TransactionDefinition)
+    			 */
+    			status = tm.getTransaction(txAttr);
+    		}
+    		else {
+    			if (logger.isDebugEnabled()) {
+    				logger.debug("Skipping transactional joinpoint [" + joinpointIdentification +
+    						"] because no transaction manager has been configured");
+    			}
+    		}
+    	}
+    	return prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);
     }
     ```
 
