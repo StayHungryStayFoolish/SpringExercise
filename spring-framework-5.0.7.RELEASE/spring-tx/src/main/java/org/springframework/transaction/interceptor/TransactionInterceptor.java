@@ -102,7 +102,16 @@ public class TransactionInterceptor extends TransactionAspectSupport implements 
 		/**
 		 * 调用 TransactionAspectSupport 类的 invokeWithinTransaction 方法去实现事务支持
 		 * @see org.springframework.transaction.interceptor.TransactionAspectSupport#invokeWithinTransaction(Method, Class, InvocationCallback)
+		 * 初始写法
 		 */
+//		return invokeWithinTransaction(invocation.getMethod(), targetClass, new InvocationCallback() {
+//			@Override
+//			// InvocationCallback接口的回调方法
+//			public Object proceedWithInvocation() throws Throwable {
+//				//执行目标方法
+//				return invocation.proceed();
+//			}
+//		});
 		return invokeWithinTransaction(invocation.getMethod(), targetClass, invocation::proceed);
 	}
 
