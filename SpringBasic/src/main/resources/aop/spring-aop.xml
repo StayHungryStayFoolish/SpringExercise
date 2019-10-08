@@ -103,7 +103,7 @@
 <!--             after 目标方法正常结束、异常都执行此 advice -->
 <!--            <aop:after method="xmlAfterAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..)) throws "/>-->
 <!--             after returning 目标方法调用正常结束，不管有无返回结果，执行此 advice-->
-<!--            <aop:after-returning method="xmlAfterReturnAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))"/>-->
+            <aop:after-returning method="xmlAfterReturnAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))"/>
 <!--             after throwing 目标方法执行异常退出，执行此 advice-->
 <!--            <aop:after-throwing method="xmlAfterThrowingAdvice" pointcut="execution(* io.stayhungrystayfoolish.aop.service..*.*(..))" throwing="throwable"/>-->
         </aop:aspect>
