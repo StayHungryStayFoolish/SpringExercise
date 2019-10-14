@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <artifactId>io.stayhungrystayfoolish</artifactId>
-        <groupId>SpringExercise</groupId>
+        <groupId>io.stayhungrystayfoolish</groupId>
+        <artifactId>SpringExercise</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
