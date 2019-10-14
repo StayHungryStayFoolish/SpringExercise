@@ -1,5 +1,7 @@
 package io.stayhungrystayfoolish.custom.ioc.factory;
 
+import io.stayhungrystayfoolish.custom.ioc.aware.Aware;
+import io.stayhungrystayfoolish.custom.ioc.aware.BeanFactoryAware;
 import io.stayhungrystayfoolish.custom.ioc.config.*;
 import io.stayhungrystayfoolish.custom.ioc.converter.*;
 import io.stayhungrystayfoolish.custom.ioc.util.ReflectUtil;
@@ -86,6 +88,48 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
         return super.getBean(beanName, args);
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> List<T> getBeansByType(Class<T> clazz) {
+        List<T> list = new ArrayList<>();
+        try {
+            for (BeanDefinition beanDefinition : beanDefinitionMap.values()) {
+                Class<?> clz = Class.forName(beanDefinition.getBeanClassName());
+                if (clazz.isAssignableFrom(clz)) {
+                    String beanName = beanDefinition.getBeanName();
+                    list.add((T) getBean(beanName));
+                }
+            }
+            return list;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<String> getBeanNamesByType(Class<?> type) {
+        try {
+            List<String> result = new ArrayList<>();
+            for (String beanName : beanDefinitionMap.keySet()) {
+                BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
+                Class<?> clazz = Class.forName(beanDefinition.getBeanClassName());
+                if (type.isAssignableFrom(clazz)) {
+                    result.add(beanName);
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, BeanDefinition> getBeanDefinitions() {
+        return beanDefinitionMap;
+    }
+
     /**
      * 根据类名（全路径）、构造参数创建类实例
      *
@@ -139,8 +183,16 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
      * @param beanDefinition xml bean 封装类
      */
     private void initInstance(Object instance, BeanDefinition beanDefinition) {
+        // 判断 aware 是不是 instance 实例的接口
+        // 操作 Aware 接口
+        if (instance instanceof Aware) {
+            if (instance instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) instance).setBeanFactory(this);
+            }
+        }
+
         String initMethod = beanDefinition.getInitMethod();
-        if (null == initMethod || "".equals(initMethod)) {
+        if (initMethod == null || "".equals(initMethod)) {
             return;
         }
         ReflectUtil.invokeMethod(instance, initMethod);
