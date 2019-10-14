@@ -91,8 +91,14 @@
 ## Spring 钩子
 
 - InitializingBean    允许 Bean 在**初始化中**后，可以自定义修改 Bean 属性	
-- BeanFactoryPostProcessor    允许 Bean 在**初始化前**修改 Bean 属性。
-- BeanPostProcessor    允许 Bean 只能在**初始化后**修改 Bean 属性。
+- BeanFactoryPostProcessor    允许 Bean 在**初始化前**修改 Bean 属性，**执行时机：** 在 BeanDefinition 未被用来创建对象之前，可以针对 **BeanDefinition** 进行修改。。
+    
+    例： PropertyPlaceholderConfigurer(context:property-placeholder 标签)，判断该 BeanDefinition 中属性是否含有 ${}，如果有，根据 key 去获取对应文件的 value 值进行替换。
+        
+- BeanPostProcessor    允许 Bean 只能在**初始化后**修改 Bean 属性，**执行时机：** 在 Bean 已经创建完成属性填充后，在 Bean 初始化前后被调用。
+    
+    例： AbstractAspectJAutoProxyCreator 实现了 BeanPostProcessor，作用就是对已创建的 Bean 进行 AOP 切面操作。
+
 - InstantiationAwareBeanPostProcessor    允许 Bean 在**实例化后**修改 Bean 属性。
 
 参考文章：
