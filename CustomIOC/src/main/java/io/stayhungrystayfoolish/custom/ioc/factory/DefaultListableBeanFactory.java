@@ -65,7 +65,7 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
             return instance;
         }
         // 如果单例不存在于工程，则根据 beanName 获取 bean 信息
-        BeanDefinition beanDefinition = getBeanDefinitionMap().get(beanName);
+        BeanDefinition beanDefinition = this.getBeanDefinitionMap().get(beanName);
         String beanClassName = beanDefinition.getBeanClassName();
         // 使用无参构造
         instance = createBeanInstance(beanClassName, null);
