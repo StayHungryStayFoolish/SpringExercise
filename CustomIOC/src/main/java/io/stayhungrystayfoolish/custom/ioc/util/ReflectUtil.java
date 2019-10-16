@@ -23,6 +23,10 @@ public class ReflectUtil {
         try {
             // 根据类型获取类
             Class<?> clazz = Class.forName(beanClassName);
+            // 如果无参，直接构造实例
+            if (0 == args.length) {
+                return clazz.newInstance();
+            }
             // 获取构造器列表
             Constructor[] constructors = clazz.getDeclaredConstructors();
             // 传入构造器参数数量
