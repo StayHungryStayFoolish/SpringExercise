@@ -83,7 +83,7 @@ public class XmlBeanDefinitionDocumentParser {
             BeanDefinition beanDefinition = null;
             for (String className : beanClassNames) {
                 String beanName = className.substring(className.lastIndexOf(".") + 1);
-                beanDefinition = new BeanDefinition(className, beanName);
+                beanDefinition = new BeanDefinition(beanName, className);
                 registerBeanDefinition(beanName, beanDefinition);
             }
         }
