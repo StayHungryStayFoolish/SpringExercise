@@ -1,6 +1,7 @@
 package io.stayhungrystayfoolish.custom.ioc.config;
 
 import io.stayhungrystayfoolish.custom.ioc.factory.DefaultListableBeanFactory;
+import io.stayhungrystayfoolish.custom.ioc.util.ClassUtil;
 import io.stayhungrystayfoolish.custom.ioc.util.ReflectUtil;
 import org.dom4j.Element;
 
@@ -30,6 +31,8 @@ public class XmlBeanDefinitionDocumentParser {
             String name = element.getName();
             if ("bean".equalsIgnoreCase(name)) {
                 parseDefaultElement(element);
+            } else {
+                parseCustomElement(element);
             }
         }
     }
@@ -71,7 +74,26 @@ public class XmlBeanDefinitionDocumentParser {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
 
+    private void parseCustomElement(Element element) {
+        if ("component-scan".equals(element.getName())) {
+            String packageName = element.attributeValue("package");
+            List<String> beanClassNames = getBeanClassNames(packageName);
+            BeanDefinition beanDefinition = null;
+            for (String className : beanClassNames) {
+                String beanName = className.substring(className.lastIndexOf(".") + 1);
+                beanDefinition = new BeanDefinition(className, beanName);
+                registerBeanDefinition(beanName, beanDefinition);
+            }
+        }
+    }
+
+    /**
+     * 获取全路径类名集合
+     */
+    private static List<String> getBeanClassNames(String packageName) {
+        return ClassUtil.getClazzName(packageName, false);
     }
 
     /**
