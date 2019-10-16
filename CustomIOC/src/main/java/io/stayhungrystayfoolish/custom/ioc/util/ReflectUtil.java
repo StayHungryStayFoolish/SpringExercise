@@ -55,7 +55,7 @@ public class ReflectUtil {
                         }
                     }
                 } else {
-                    return constructor.newInstance(null);
+                    return clazz.newInstance();
                 }
             }
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
