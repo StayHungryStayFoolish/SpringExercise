@@ -4,7 +4,7 @@
 
 - **CustomIoC** 实现 Spring BeanFactory 的创建解析基本功能。
 - **CustomIoCExercise** 测试 CustomIoC 功能。
-- **spring-framework-5.0.7.RELEASE** Spring 官方 5.0.7 源码，部分流程增加中文注释
+- **spring-framework-5.0.7.RELEASE** Spring 官方 5.0.7 源码，部分流程增加中文注释，源码导入参考源码内的 import-into-idea.md 文件和 https://www.youyoustudio.com/2019/03/21/109.html 。
 - **SpringBasic** 采用 XML 方式配置 MyBatis、AOP  
 - **SpringMybatisAnnotation** 采用注解方式配置 MyBatis  
 
