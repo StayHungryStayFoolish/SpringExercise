@@ -13,6 +13,7 @@
         <module>SpringMybatisAnnotation</module>
         <module>CustomIoC</module>
         <module>CustomIoCExercise</module>
+        <module>CustomMVC</module>
     </modules>
 
     <properties>
