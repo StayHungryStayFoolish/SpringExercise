@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: aaa
-Automatic-Module-Name: aaa
-Implementation-Version: 5.0.7.RELEASE
-Created-By: 1.8.0_191 (Oracle Corporation)
-
