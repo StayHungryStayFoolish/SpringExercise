@@ -11,9 +11,9 @@ public class Course {
 
     private Integer day;
 
-    public void init() {
-        System.out.println(" Initialization Course .");
-    }
+//    public void init() {
+//        System.out.println(" Initialization Course .");
+//    }
 
     public String getSubject() {
         return subject;

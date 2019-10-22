@@ -9,7 +9,7 @@
     </bean>
 
     <!-- 该类有一个初始化方法 -->
-    <bean id="course" class="io.stayhungrystayfoolish.custom.ioc.exercise.domain.Course" init-method="init">
+    <bean id="course" class="io.stayhungrystayfoolish.custom.ioc.exercise.domain.Course">
         <!-- String类型 -->
         <property name="subject" value="Spring"></property>
         <!-- Integer类型 -->

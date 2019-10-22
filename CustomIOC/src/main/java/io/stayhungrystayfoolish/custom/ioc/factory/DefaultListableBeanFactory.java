@@ -42,6 +42,9 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
      */
     private List<TypeConverter> typeConverters = new ArrayList<>();
 
+    /**
+     * 构造参数，通过读取 xml 文件加载 BeanDefinition
+     */
     public DefaultListableBeanFactory(String location) {
         registerResources();
         registerTypeConverters();
