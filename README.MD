@@ -1,4 +1,4 @@
-# Spring 源码分析及手写 IoC 基础框架(附带 AOP、MyBatis 简单应用)
+# Spring 源码分析及手写 IoC、MVC 基础框架(附带 AOP、MyBatis 简单应用)
 
 ## 项目模块说明
 
