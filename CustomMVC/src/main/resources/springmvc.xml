@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+    <!-- 配置处理器映射器 -->
+    <bean class="io.stayhungrystayfoolish.custom.mvc.handlermapping.AnnotationHandlerMapping"></bean>
+    <!-- 配置处理器适配器 -->
+    <bean class="io.stayhungrystayfoolish.custom.mvc.adapter.AnnotationRequestMappingAdapter"></bean>
+
+    <component-scan package="io.stayhungrystayfoolish.custom.mvc.controller" />
+</beans>
