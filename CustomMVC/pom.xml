@@ -75,6 +75,7 @@
                 <configuration>
                     <port>8080</port>
                     <path>/</path>
+                    <ignorePackaging>true</ignorePackaging>
                 </configuration>
             </plugin>
         </plugins>
