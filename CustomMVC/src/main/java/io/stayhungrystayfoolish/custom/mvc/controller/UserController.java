@@ -29,4 +29,10 @@ public class UserController {
     public String delete(Integer id) {
         return "OK";
     }
+
+    @RequestMapping(value = "/add")
+    @ResponseBody
+    public String add() {
+        return "OK";
+    }
 }

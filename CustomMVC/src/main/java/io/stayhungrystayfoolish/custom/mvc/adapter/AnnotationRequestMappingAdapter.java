@@ -36,7 +36,7 @@ public class AnnotationRequestMappingAdapter implements HandlerAdapter {
         Object[] args = getParameters(request, method);
         try {
             // 使用反射调用并处理返回结构（只处理 String 和 Map 不处理 POJO 和 ModelAndView ）
-            Object returnValue = method.invoke(handler, args);
+            Object returnValue = method.invoke(controller, args);
             handleReturnValue(returnValue, response, method);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
