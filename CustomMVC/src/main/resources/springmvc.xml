@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans>
     <!-- 配置处理器映射器 -->
-    <bean class="io.stayhungrystayfoolish.custom.mvc.handlermapping.AnnotationHandlerMapping"></bean>
+    <bean class="io.stayhungrystayfoolish.custom.mvc.handlermapping.AnnotationHandlerMapping" init-method="init"></bean>
     <!-- 配置处理器适配器 -->
     <bean class="io.stayhungrystayfoolish.custom.mvc.adapter.AnnotationRequestMappingAdapter"></bean>
 
