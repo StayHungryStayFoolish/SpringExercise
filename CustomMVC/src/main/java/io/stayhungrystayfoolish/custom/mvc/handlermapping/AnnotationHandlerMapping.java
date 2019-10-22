@@ -16,12 +16,17 @@ import java.util.Map;
 /**
  * @Author: Created by bonismo@hotmail.com on 2019-10-22 16:36
  * @Description:
- * @Version: 1.0
+ * @Version: 1.0  继承 BeanFactoryAware 取得 BeanFactory ，
+ * 从 IoC 容器获取 BeanDefinition 将带有 @Controller 和 @RequestMapping 的类和方法与注解上的 uri 建立映射关系
+ * 最终可以取出 uri 对应的 Method 调用 method.invoke()
  */
 public class AnnotationHandlerMapping implements HandlerMapping, BeanFactoryAware {
 
     private BeanFactory beanFactory;
 
+    /**
+     * 带有 @Controller 和 @RequestMapping 的类和方法与注解上的 uri 建立映射关系
+     */
     private Map<String, HandlerMethod> annotationHandlerMethodMap = new HashMap<>();
 
 
