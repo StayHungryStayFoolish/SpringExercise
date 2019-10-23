@@ -151,13 +151,37 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 		}
 
 		// Set bean properties from init parameters.
+		/**
+		 * 封装持有 PropertyValue 的对象，该 ServletConfigPropertyValues 对象会在构造参数中使用 ServletConfig 对象找到 web.xml 文件中
+		 * DispatcherServlet 的 init-param 参数设置到 private final List<PropertyValue> propertyValueList; 属性中，设置到 DispatcherServlet 中
+		 * @see org.springframework.beans.PropertyValues
+		 *
+		 * web.xml 文件配置
+		 *
+		 * <servlet>
+		 *   	<servlet-name>dispatcher</servlet-name>
+		 *   	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		 *   	<load-on-startup>1</load-on-startup>
+		 *   	<init-param>
+		 *    		 <param-name>contextConfigLocation</param-name>
+		 *    		 <param-value>classpath:springmvc.xml</param-value>
+		 *  	 </init-param>
+		 * </servlet>
+		 *
+		 * <servlet-mapping>
+		 *   	<servlet-name>dispatcher</servlet-name>
+		 *   	<url-pattern>/</url-pattern>
+		 * </servlet-mapping>
+		 */
 		PropertyValues pvs = new ServletConfigPropertyValues(getServletConfig(), this.requiredProperties);
 		if (!pvs.isEmpty()) {
 			try {
+				// 使用 BeanWrapper 构造 DispatcherServlet
 				BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(this);
 				ResourceLoader resourceLoader = new ServletContextResourceLoader(getServletContext());
 				bw.registerCustomEditor(Resource.class, new ResourceEditor(resourceLoader, getEnvironment()));
 				initBeanWrapper(bw);
+				// 将 ServletConfigPropertyValues 对象父类的 List<PropertyValue> propertyValueList 并设置 DispatcherServlet 属性
 				bw.setPropertyValues(pvs, true);
 			}
 			catch (BeansException ex) {
@@ -169,6 +193,10 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 		}
 
 		// Let subclasses do whatever initialization they like.
+		/**
+		 * 默认空实现，由子类实现
+		 * @see FrameworkServlet#initServletBean()
+		 */
 		initServletBean();
 
 		if (logger.isDebugEnabled()) {

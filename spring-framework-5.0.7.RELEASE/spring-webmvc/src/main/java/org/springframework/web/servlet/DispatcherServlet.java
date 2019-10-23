@@ -476,6 +476,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	@Override
 	protected void onRefresh(ApplicationContext context) {
+		// 采用策略模式初始化各种对象
 		initStrategies(context);
 	}
 

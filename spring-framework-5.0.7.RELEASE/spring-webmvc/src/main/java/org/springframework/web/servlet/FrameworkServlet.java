@@ -39,6 +39,7 @@ import org.springframework.context.event.SourceFilteringListener;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.i18n.SimpleLocaleContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -496,6 +497,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		long startTime = System.currentTimeMillis();
 
 		try {
+			// 初始化 WebApplicationContext 对象属性
 			this.webApplicationContext = initWebApplicationContext();
 			initFrameworkServlet();
 		}
@@ -521,6 +523,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	 * @see #setContextConfigLocation
 	 */
 	protected WebApplicationContext initWebApplicationContext() {
+		// 获取 SpringIoC 根容器
 		WebApplicationContext rootContext =
 				WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 		WebApplicationContext wac = null;
@@ -538,6 +541,10 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 						// the root application context (if any; may be null) as the parent
 						cwac.setParent(rootContext);
 					}
+					/**
+					 * 配置 DispatcherServlet 属性完成初始化并最终刷新 SpringIoC 容器，初始化所有的 Bean
+					 * @see AbstractApplicationContext#refresh()
+					 */
 					configureAndRefreshWebApplicationContext(cwac);
 				}
 			}
@@ -547,10 +554,16 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			// has been registered in the servlet context. If one exists, it is assumed
 			// that the parent context (if any) has already been set and that the
 			// user has performed any initialization such as setting the context id
+			// 当 webApplicationContext 已经存在 ServletContext 时，通过配置在 servlet 中的 contextAttribute 参数获取，该属性一般步设置
 			wac = findWebApplicationContext();
 		}
 		if (wac == null) {
 			// No context instance is defined for this servlet -> create a local one
+			// 如果 webApplicationContext 还没有创建，则创建一个
+			/**
+			 * 最终也会调用该方法
+			 * @see #configureAndRefreshWebApplicationContext
+			 */
 			wac = createWebApplicationContext(rootContext);
 		}
 
@@ -558,12 +571,17 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			// Either the context is not a ConfigurableApplicationContext with refresh
 			// support or the context injected at construction time had already been
 			// refreshed -> trigger initial onRefresh manually here.
+			/**
+			 * 当 ContextRefresh 事件没有触发时调用此方法，模版方法，由子类 DispatcherServlet 使用策略模式完成各种组件装配
+			 * @see DispatcherServlet#onRefresh(ApplicationContext)
+			 */
 			onRefresh(wac);
 		}
 
 		if (this.publishContext) {
 			// Publish the context as a servlet context attribute.
 			String attrName = getServletContextAttributeName();
+			// 将新建的 SpringIoC 容器设置到 ServletContext 中
 			getServletContext().setAttribute(attrName, wac);
 			if (this.logger.isDebugEnabled()) {
 				this.logger.debug("Published WebApplicationContext of servlet '" + getServletName() +
@@ -669,6 +687,10 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 
 		postProcessWebApplicationContext(wac);
 		applyInitializers(wac);
+		/**
+		 * 刷新 SpringIoC 容器，初始化所有的 Bean
+		 * @see AbstractApplicationContext#refresh()
+		 */
 		wac.refresh();
 	}
 
