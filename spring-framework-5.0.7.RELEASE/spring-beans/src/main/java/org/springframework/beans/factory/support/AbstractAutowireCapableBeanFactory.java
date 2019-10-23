@@ -1754,7 +1754,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	protected void invokeInitMethods(String beanName, final Object bean, @Nullable RootBeanDefinition mbd)
 			throws Throwable {
-
+		// 判断是否实现了 InitializingBean 接口
 		boolean isInitializingBean = (bean instanceof InitializingBean);
 		if (isInitializingBean && (mbd == null || !mbd.isExternallyManagedInitMethod("afterPropertiesSet"))) {
 			if (logger.isDebugEnabled()) {
@@ -1763,6 +1763,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (System.getSecurityManager() != null) {
 				try {
 					AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+						/**
+						 * 实现 InitializingBean 接口，调用该方法
+						 * @see InitializingBean#afterPropertiesSet()
+						 */
 						((InitializingBean) bean).afterPropertiesSet();
 						return null;
 					}, getAccessControlContext());
@@ -1772,15 +1776,22 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				}
 			}
 			else {
+				/**
+				 * 实现 InitializingBean 接口，调用该方法
+				 * @see InitializingBean#afterPropertiesSet()
+				 */
 				((InitializingBean) bean).afterPropertiesSet();
 			}
 		}
 
+		// 然后调用 xml 标签中的 init-method 方法
 		if (mbd != null && bean.getClass() != NullBean.class) {
+			// 获取 init-method 指定的方法
 			String initMethodName = mbd.getInitMethodName();
 			if (StringUtils.hasLength(initMethodName) &&
 					!(isInitializingBean && "afterPropertiesSet".equals(initMethodName)) &&
 					!mbd.isExternallyManagedInitMethod(initMethodName)) {
+				// 最终通过反射调用该方法
 				invokeCustomInitMethod(beanName, bean, mbd);
 			}
 		}
