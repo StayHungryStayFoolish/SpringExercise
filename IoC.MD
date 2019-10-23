@@ -109,6 +109,10 @@
 
 ---
 
+## Bean 生命周期
+
+![Spring Bean 生命周期](https://github.com/StayHungryStayFoolish/SpringExercise/blob/master/Bean%20%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png?raw=true)
+
 ## Spring IoC 
 
 - Spring IoC 容器加载（BeanDefinition 注册）只是完成了 **BeanDefinition** 的注册，只是用 Map 数据结构维护了 BeanDefinition。
