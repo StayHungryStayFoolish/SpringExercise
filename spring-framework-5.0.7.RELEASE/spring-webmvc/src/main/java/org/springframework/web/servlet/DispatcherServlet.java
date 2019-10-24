@@ -36,6 +36,8 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.async.WebAsyncManager;
 import org.springframework.web.context.request.async.WebAsyncUtils;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
@@ -893,6 +895,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Keep a snapshot of the request attributes in case of an include,
 		// to be able to restore the original attributes after the include.
+		// 保存 HttpServletRequest 的请求属性快照
 		Map<String, Object> attributesSnapshot = null;
 		if (WebUtils.isIncludeRequest(request)) {
 			attributesSnapshot = new HashMap<>();
@@ -906,6 +909,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		// Make framework objects available to handlers and view objects.
+		// 将 DispatcherServlet 的 web 应用上下文(子IoC容器)、LocaleResolver、ThemeResolver等放入请求中，供 Handler、View 对象使用
 		request.setAttribute(WEB_APPLICATION_CONTEXT_ATTRIBUTE, getWebApplicationContext());
 		request.setAttribute(LOCALE_RESOLVER_ATTRIBUTE, this.localeResolver);
 		request.setAttribute(THEME_RESOLVER_ATTRIBUTE, this.themeResolver);
@@ -921,12 +925,14 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		try {
+			// 真正进行 Http 请求处理
 			doDispatch(request, response);
 		}
 		finally {
 			if (!WebAsyncUtils.getAsyncManager(request).isConcurrentHandlingStarted()) {
 				// Restore the original attribute snapshot, in case of an include.
 				if (attributesSnapshot != null) {
+					// 还原请求属性
 					restoreAttributesAfterInclude(request, attributesSnapshot);
 				}
 			}
@@ -946,6 +952,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpServletRequest processedRequest = request;
+		// Handler 执行链
 		HandlerExecutionChain mappedHandler = null;
 		boolean multipartRequestParsed = false;
 
@@ -957,19 +964,25 @@ public class DispatcherServlet extends FrameworkServlet {
 
 			try {
 				processedRequest = checkMultipart(request);
+				// 解析 MultipartHttpServletRequest 请求，检查是否包含文件等类型的数据
 				multipartRequestParsed = (processedRequest != request);
 
 				// Determine handler for the current request.
+				// 根据请求，从HandlerMapping 获取 HandlerExecutionChain
 				mappedHandler = getHandler(processedRequest);
 				if (mappedHandler == null) {
+					// 如果 HandlerExecutionChain 为 null，则没有能够进行处理的 Handler，返回 404
 					noHandlerFound(processedRequest, response);
 					return;
 				}
 
 				// Determine handler adapter for the current request.
+				// 根据查找到的 Handler，获取能够进行处理的 HandlerAdapter
+				// 获取 RequestMappingHandlerAdapter
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
 				// Process last-modified header, if supported by the handler.
+				// 判断自上次请求后是否有修改，没有修改直接返回响应
 				String method = request.getMethod();
 				boolean isGet = "GET".equals(method);
 				if (isGet || "HEAD".equals(method)) {
@@ -978,22 +991,44 @@ public class DispatcherServlet extends FrameworkServlet {
 						logger.debug("Last-Modified value for [" + getRequestUri(request) + "] is: " + lastModified);
 					}
 					if (new ServletWebRequest(request, response).checkNotModified(lastModified) && isGet) {
+						// get请求，且未修改，直接返回
 						return;
 					}
 				}
 
+				// 按顺序依次执行 HandlerInterceptor 的 preHandle方法
+				// 如果任一 HandlerInterceptor 的 preHandle 方法没有通过，则不继续进行处理
+				// 1. 应用 HandlerInterceptor 的 preHandle 方法
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
 
 				// Actually invoke the handler.
+				// 2. 调用handler(通过 HandlerAdapter 执行查找到的 handler) 并返回视图
+				/**
+				 * 2.1 调用该类 handle 方法
+				 * @see org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter#handle(HttpServletRequest, HttpServletResponse, Object)
+				 *
+				 * 2.2 handler 内部调用 handleInternal 方法，最终调用 invokeHandlerMethod
+				 * @see org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#handleInternal(HttpServletRequest, HttpServletResponse, HandlerMethod)
+				 *
+				 * 2.3 invokeHandlerMethod 构造 ServletInvocableHandlerMethod 对象并调用该对象的 invokeAndHandle，并最终返回视图结果
+				 * @see org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#invokeHandlerMethod(HttpServletRequest, HttpServletResponse, HandlerMethod)
+				 *
+				 * 2.4 执行反射调用方法并返回处理返回值
+				 * @see org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod#invokeAndHandle(ServletWebRequest, ModelAndViewContainer, Object...)
+				 *
+				 *
+				 */
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
 				if (asyncManager.isConcurrentHandlingStarted()) {
 					return;
 				}
 
+				// 应用默认视图名
 				applyDefaultViewName(processedRequest, mv);
+				// 3. 逆序执行 HandlerInterceptor 的 postHandle 方法
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
 			}
 			catch (Exception ex) {
@@ -1004,6 +1039,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				// making them available for @ExceptionHandler methods and other scenarios.
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
+			// 4. 视图渲染，如果有异常，则渲染异常页面
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		}
 		catch (Exception ex) {
@@ -1017,12 +1053,14 @@ public class DispatcherServlet extends FrameworkServlet {
 			if (asyncManager.isConcurrentHandlingStarted()) {
 				// Instead of postHandle and afterCompletion
 				if (mappedHandler != null) {
+					// 逆序执行所有 HandlerInterceptor 的 afterCompletion 方法
 					mappedHandler.applyAfterConcurrentHandlingStarted(processedRequest, response);
 				}
 			}
 			else {
 				// Clean up any resources used by a multipart request.
 				if (multipartRequestParsed) {
+					// 如果请求包含文件类型的数据，则进行相关清理工作
 					cleanupMultipart(processedRequest);
 				}
 			}
@@ -1051,7 +1089,10 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		boolean errorView = false;
 
+		// 判断 HandlerMapping、HandlerAdapter 处理时的异常是否为空
 		if (exception != null) {
+			// 上述两个组件处理时的异常不为空
+			// 如果为 ModelAndViewDefiningException 异常，则获取一个异常视图
 			if (exception instanceof ModelAndViewDefiningException) {
 				logger.debug("ModelAndViewDefiningException encountered", exception);
 				mv = ((ModelAndViewDefiningException) exception).getModelAndView();
@@ -1064,13 +1105,16 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		// Did the handler return a view to render?
+		// 判断 mv 是否为空，不管是正常的 ModelAndView 还是异常的 ModelAndView，只要存在 mv 就进行视图渲染
 		if (mv != null && !mv.wasCleared()) {
+			// 视图渲染
 			render(mv, request, response);
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
 			}
 		}
 		else {
+			// 否则记录无视图
 			if (logger.isDebugEnabled()) {
 				logger.debug("Null ModelAndView returned to DispatcherServlet with name '" + getServletName() +
 						"': assuming HandlerAdapter completed request handling");
@@ -1083,6 +1127,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		if (mappedHandler != null) {
+			// 执行 HandlerInterceptor 的 afterCompletion 方法
 			mappedHandler.triggerAfterCompletion(request, response, null);
 		}
 	}
@@ -1292,12 +1337,14 @@ public class DispatcherServlet extends FrameworkServlet {
 		// Determine locale for request and apply it to the response.
 		Locale locale =
 				(this.localeResolver != null ? this.localeResolver.resolveLocale(request) : request.getLocale());
+		// 设置 Locale
 		response.setLocale(locale);
 
 		View view;
 		String viewName = mv.getViewName();
 		if (viewName != null) {
 			// We need to resolve the view name.
+			// 使用 ViewResolver 解析视图遍历所有 ViewResolver 类，根据视图名称解析对应的视图 View 默认情况下，得到InternalResourceView对象。
 			view = resolveViewName(viewName, mv.getModelInternal(), locale, request);
 			if (view == null) {
 				throw new ServletException("Could not resolve view with name '" + mv.getViewName() +
@@ -1319,6 +1366,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 		try {
 			if (mv.getStatus() != null) {
+				// 设置 Http 响应状态码
 				response.setStatus(mv.getStatus().value());
 			}
 			view.render(mv.getModelInternal(), request, response);
